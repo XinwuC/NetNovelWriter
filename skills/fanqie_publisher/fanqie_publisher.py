@@ -21,7 +21,7 @@ class FanqiePublisher:
         return True
 
 def get_publisher():
-    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
     config = {}
     if os.path.exists(env_path):
         with open(env_path) as f:

@@ -5,7 +5,7 @@ import sys
 
 # Add skills directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from skills.manage_writer import spawn_writer, kill_writer, AGENTS_DIR
+from skills.manage_writer.manage_writer import spawn_writer, kill_writer, AGENTS_DIR
 
 def test_spawn_and_kill_writer():
     writer_name = "test_writer_x1"

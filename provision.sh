@@ -27,7 +27,7 @@ fi
 
 # 4. Setup permissions for custom skills
 echo "Setting executable permissions for custom skills..."
-chmod +x skills/*.py
+chmod +x skills/*/*.py
 
 # 4. Success message
 echo "✅ Custom NetNovelWriters skills and agent workspaces have been configured."
