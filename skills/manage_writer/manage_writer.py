@@ -23,7 +23,7 @@ def spawn_writer(theme, writer_name, personality):
         return False
         
     try:
-        shutil.copytree(TEMPLATE_DIR, target_dir)
+        shutil.copytree(TEMPLATE_DIR, target_dir, symlinks=True)
         
         # Replace template variables
         agent_md_path = os.path.join(target_dir, "agent.md")
@@ -78,7 +78,6 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
     
     spawn_parser = subparsers.add_parser("spawn", help="Spawn a new writer agent")
-    spawn_parser.add_parser("theme", help="The novel theme")
     spawn_parser.add_argument("--theme", required=True, help="Theme for the novel")
     spawn_parser.add_argument("--name", required=True, help="Unique name for the writer agent")
     spawn_parser.add_argument("--personality", default="Analytical and serious", help="Personality description for SOUL.md")
