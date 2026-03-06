@@ -10,8 +10,8 @@ This skill is designed specifically for the Master Agent to oversee its fleet of
 ## Commands
 
 ### Spawn
-Copies the default template to spawn a new autonomous Writer Agent.
-`python manage_writer.py spawn --theme "THEME" --name "AGENT_NAME" --personality "TRAITS"`
+Copies the default template to spawn a new autonomous Writer Agent, and directly registers it to the OpenClaw environment using `openclaw agent add`.
+`python manage_writer.py spawn --theme "THEME" --name "AGENT_NAME" --personality "TRAITS" [--model "MODEL_NAME"]`
 
 ### Kill
 Terminates and archives a failing Writer Agent.

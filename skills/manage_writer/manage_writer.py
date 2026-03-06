@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 AGENTS_DIR = os.path.join(BASE_DIR, "agents")
 TEMPLATE_DIR = os.path.join(AGENTS_DIR, "nnw_writer_template")
 
-def spawn_writer(theme, writer_name, personality):
+def spawn_writer(theme, writer_name, personality, model):
     logger.info(f"Spawning Writer Agent '{writer_name}' with theme '{theme}'...")
     target_dir = os.path.join(AGENTS_DIR, f"nnw_writer_{writer_name}")
     
@@ -41,10 +41,23 @@ def spawn_writer(theme, writer_name, personality):
             f.write(soul_content)
 
         logger.info(f"Writer '{writer_name}' workspace created at {target_dir}")
-        print(json.dumps({"status": "success", "writer_name": writer_name, "message": "Workspace created successfully", "path": target_dir}))
         
-        # In a real environment, we'd launch the agent here:
-        # subprocess.Popen(["openclaw", "start", target_dir])
+        # Register the new agent into openclaw
+        cmd = ["openclaw", "agent", "add", writer_name, "--workspace", target_dir]
+        if model:
+            cmd.extend(["--model", model])
+            
+        logger.info(f"Registering new agent with OpenClaw: {' '.join(cmd)}")
+        try:
+            subprocess.run(cmd, check=True)
+            logger.info("Successfully registered agent with OpenClaw.")
+        except FileNotFoundError:
+            logger.warning("OpenClaw command not found in this environment. Skipping registration.")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Failed to register agent with OpenClaw: {e}")
+            
+        print(json.dumps({"status": "success", "writer_name": writer_name, "message": "Workspace created and agent registered successfully", "path": target_dir}))
+        
         return True
     except Exception as e:
         logger.error(f"Failed to spawn writer: {e}")
@@ -61,12 +74,20 @@ def kill_writer(writer_name):
         return False
         
     try:
-        # In a real environment, we'd stop the process first:
-        # subprocess.run(["openclaw", "stop", f"nnw_writer_{writer_name}"])
-        archive_dir = os.path.join(AGENTS_DIR, f"archive_nnw_writer_{writer_name}")
-        shutil.move(target_dir, archive_dir)
-        logger.info(f"Writer '{writer_name}' archived to {archive_dir}")
-        print(json.dumps({"status": "success", "writer_name": writer_name, "message": "Agent archived successfully"}))
+        shutil.rmtree(target_dir)
+        logger.info(f"Writer '{writer_name}' workspace removed.")
+        
+        # Remove agent from openclaw
+        cmd = ["openclaw", "agent", "remove", writer_name]
+        try:
+            subprocess.run(cmd, check=True)
+            logger.info(f"Successfully removed '{writer_name}' from OpenClaw registry.")
+        except FileNotFoundError:
+            pass
+        except subprocess.CalledProcessError as e:
+            logger.warning(f"Warning: Failed to remove agent from OpenClaw registry: {e}")
+            
+        print(json.dumps({"status": "success", "writer_name": writer_name, "message": "Writer agent terminated and removed successfully"}))
         return True
     except Exception as e:
         logger.error(f"Failed to kill writer: {e}")
@@ -81,6 +102,7 @@ def main():
     spawn_parser.add_argument("--theme", required=True, help="Theme for the novel")
     spawn_parser.add_argument("--name", required=True, help="Unique name for the writer agent")
     spawn_parser.add_argument("--personality", default="Analytical and serious", help="Personality description for SOUL.md")
+    spawn_parser.add_argument("--model", default=os.environ.get("OPENCLAW_MODEL"), help="Model to use for the agent (defaults to master agent's model if OPENCLAW_MODEL env var is set)")
     
     kill_parser = subparsers.add_parser("kill", help="Terminate an existing writer agent")
     kill_parser.add_argument("--name", required=True, help="Unique name of the writer agent to kill")
@@ -88,7 +110,7 @@ def main():
     args = parser.parse_args()
     
     if args.command == "spawn":
-        spawn_writer(args.theme, args.name, args.personality)
+        spawn_writer(args.theme, args.name, args.personality, args.model)
     elif args.command == "kill":
         kill_writer(args.name)
 
