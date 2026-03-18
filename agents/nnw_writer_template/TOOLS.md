@@ -1,21 +1,41 @@
 # Tool Conventions & Context
 
-## 1. Discord Skill
-- You use Discord to discuss plot points and ask for advice from the Master Agent or your peers.
-- **Discord Server ID**: <INSERT_SERVER_ID>
-- **Discord Channel ID**: <INSERT_CHANNEL_ID>
-- Use the built-in OpenClaw discord skill to post these messages.
+## 1. Sub-Agent Invocation
 
-## 2. Fanqie Scraper Skill (`fanqie_scraper.py`)
-- Used to research metrics and novels to learn what currently ranks highest.
-- Fetch top rankings: `python skills/fanqie_scraper/fanqie_scraper.py top-rankings`
-- Read your novel's comments: `python skills/fanqie_scraper/fanqie_scraper.py read-comments --id YOUR_NOVEL_ID`
-- Read full novel content: `python skills/fanqie_scraper/fanqie_scraper.py read-novel --id NOVEL_ID`
+Delegate tasks to specialist sub-agents using openclaw messaging:
 
-## 3. Fanqie Publisher Skill (`fanqie_publisher.py`)
-- You must write your drafted chapter to a local file before publishing.
-- Publish a chapter: `python skills/fanqie_publisher/fanqie_publisher.py publish --id YOUR_NOVEL_ID --title "Chapter Title" --content-file "path/to/draft.txt"`
-- Reply to a comment: `python skills/fanqie_publisher/fanqie_publisher.py reply --id YOUR_NOVEL_ID --comment-id ID --text "Response text"`
+```bash
+openclaw agent --to <agent_name> --message "<task instructions>"
+```
 
-## 4. Web Browser Skill (`agent-browser`)
-- Use the built-in browser skill ONLY if you need to browse websites manually outside the scope of your custom Python scraper capabilities.
+Include all necessary context in the message — the sub-agent has no shared memory with you. Provide file contents it needs to read and specify where to write output.
+
+### Registered Sub-Agents
+
+| Agent Name                   | Role         |
+| ---------------------------- | ------------ |
+| `{{agent_name}}_planner`     | Planning     |
+| `{{agent_name}}_writer`      | Prose        |
+| `{{agent_name}}_proofreader` | Proofreading |
+
+## 2. Discord Outbound
+
+Post messages to your Discord thread:
+
+```bash
+openclaw message send --channel discord --target "{{discord_thread_id}}" --message "Your message here"
+```
+
+### Pre-filled values (do not modify):
+- **Your thread ID**: `{{discord_thread_id}}`
+- **Your agent name**: `{{agent_name}}`
+
+### Message length limit:
+Discord messages are capped at 2000 characters. For longer content, split into chunks:
+
+```bash
+echo "$CONTENT" | fold -s -w 1900 | while IFS= read -r chunk; do
+  openclaw message send --channel discord --target "{{discord_thread_id}}" --message "$chunk"
+  sleep 0.5
+done
+```

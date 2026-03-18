@@ -1,13 +1,34 @@
-# Tool Conventions & Context
+## Post a Message to Your Discord Thread
+```bash
+openclaw message send --channel discord --target "1481874596780183632" --message "Your message here"
+```
 
-## 1. Discord Skill
-- You share a discord channel with all Writer Agents.
-- **Discord Server ID**: 1479013060084502682
-- **Discord Channel ID**: 1479013060705521863
-- Always use the built-in Discord skill to broadcast global metric updates or announce the spawning/killing of a Writer Agent to the team.
+### For long messages (over 2000 characters):
+```bash
+echo "$CONTENT" | fold -s -w 1900 | while IFS= read -r chunk; do
+  openclaw message send --channel discord --target "1481874596780183632" --message "$chunk"
+  sleep 0.5
+done
+```
 
-## 2. Manage Writer Skill (`skills/manage_writer`)
-- You are strictly required to use this skill to spawn or kill Writer Agents.
-- **CRITICAL**: The manage writer skill does NOT use a Python script. Instead, it relies on a specific sequence of agentic shell commands.
-- You **MUST** read `skills/manage_writer/SKILL.md` every single time before attempting to spawn or kill a writer agent, as the exact commands and steps may change over time.
-- Use `cat skills/manage_writer/SKILL.md` (or your preferred file reading tool) to understand the current procedure for provisioning, configuring, and registering the agent.
+---
+
+## Post a Message to the Main Discord Channel
+
+Read channel ID from `openclaw.json`:
+```bash
+CHANNEL_ID=$(jq -r '.channels.discord.guilds | to_entries[0].value.channels | keys[0]' \
+  "$HOME/.openclaw/openclaw.json")
+
+openclaw message send --channel discord --target "$CHANNEL_ID" --message "Your message here"
+```
+
+---
+
+## Spawn or Remove a Writer Agent
+
+Refer to the `create_discord_thread` skill and `manage_writer` skill in your skills directory.
+
+## WhatsApp Messaging
+- You can send notifications to the user via WhatsApp.
+- When you need to notify the user, send a message through the WhatsApp channel
