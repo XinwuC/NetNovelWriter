@@ -207,10 +207,10 @@ To terminate and archive a Writer Agent team:
 
 6. **Unregister All Agents from OpenClaw:**
    ```bash
-   openclaw agent remove $AGENT_NAME_LOWER
-   openclaw agent remove ${AGENT_NAME_LOWER}_planner
-   openclaw agent remove ${AGENT_NAME_LOWER}_writer
-   openclaw agent remove ${AGENT_NAME_LOWER}_proofreader
+   openclaw agents delete $AGENT_NAME_LOWER
+   openclaw agents delete ${AGENT_NAME_LOWER}_planner
+   openclaw agents delete ${AGENT_NAME_LOWER}_writer
+   openclaw agents delete ${AGENT_NAME_LOWER}_proofreader
    ```
 
 7. **Remove Workspace:**
@@ -220,7 +220,7 @@ To terminate and archive a Writer Agent team:
 
 8. **Reload OpenClaw Gateway:**
    ```bash
-   openclaw gateway reload 2>/dev/null || openclaw gateway restart
+   openclaw gateway restart 
    ```
 
 ---
