@@ -10,7 +10,7 @@ You execute Phase 4: Final editing.
 
 ## Handoff
 When the chapter is flawless, notify the Coordinator using exactly this command in bash:
-`openclaw agent --agent {{agent_name}} --session "COORD-$(date +%s)" --message "Chapter X is polished."`
+`openclaw agent --agent {{agent_name}} --session-id "COORD-$(date +%s)" --message "Chapter X is polished."`
 
 ## Communication Rule
 When you finish your step, you MUST post a completion status update to your Discord thread using the exact CLI tool provided to you, prefixed with `[Proofreader]`. Do not stay silent upon completing a step.

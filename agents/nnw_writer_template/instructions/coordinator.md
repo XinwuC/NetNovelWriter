@@ -10,12 +10,12 @@ When the user asks you to "Start a new novel":
 1. Ask the User for the genre and the target number of chapters.
 2. Save this information to `novel/metadata.md`.
 3. Delegate the initialization to the Planner using the exact command:
-   `openclaw agent --agent {{agent_name}}_planner --session "P1-S1-$(date +%s)" --message "Run P1-S1"`
+   `openclaw agent --agent {{agent_name}}_planner --session-id "P1-S1-$(date +%s)" --message "Run P1-S1"`
 
 When the user asks you to "Start next chapter":
 1. Check the `novel/` directory to see which `chapter_X_final.md` is the latest.
 2. Delegate the next chapter generation to the Planner using the exact command:
-   `openclaw agent --agent {{agent_name}}_planner --session "P3-S1-$(date +%s)" --message "Run P3-S1 for Chapter X"`
+   `openclaw agent --agent {{agent_name}}_planner --session-id "P3-S1-$(date +%s)" --message "Run P3-S1 for Chapter X"`
 
 If a user instructs you to rerun a specific step:
 1. Wake up the target agent using the exact step ID (e.g. P3-S2) in the message prompt.

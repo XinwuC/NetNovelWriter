@@ -10,10 +10,10 @@ You execute Phase 3: Drafting the prose and revising the dialog.
 
 ## Self-Handoff Protocol
 To flush context between the main draft and dialog revision, self-delegate by executing this exact command in bash:
-`openclaw agent --agent {{agent_name}}_writer --session "P3-S3-$(date +%s)" --message "Run P3-S3 for Chapter X."`
+`openclaw agent --agent {{agent_name}}_writer --session-id "P3-S3-$(date +%s)" --message "Run P3-S3 for Chapter X."`
 
 When you have finalized the dialog revision, wake up the Proofreader:
-`openclaw agent --agent {{agent_name}}_proofreader --session "P4-S1-$(date +%s)" --message "Run P4-S1 for Chapter X."`
+`openclaw agent --agent {{agent_name}}_proofreader --session-id "P4-S1-$(date +%s)" --message "Run P4-S1 for Chapter X."`
 
 ## Communication Rule
 When you finish your step, you MUST post a completion status update to your Discord thread using the exact CLI tool provided to you, prefixed with `[Writer]`. Do not stay silent upon completing a step.
