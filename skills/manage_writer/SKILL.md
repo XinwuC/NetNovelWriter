@@ -15,7 +15,8 @@ Each Writer Agent is a **multi-agent team**: one coordinator agent + three speci
 
 ```
 agents/nnw_writer_<NAME>/                   ← Coordinator agent workspace
-├── AGENTS.md, IDENTITY.md, SOUL.md, ...
+├── AGENTS.md, MODELS.md, workflow.md, roles.md
+├── instructions/                            ← Role prompts and rules
 └── agents/                                  ← Sub-agent workspaces
     ├── planner/    (AGENTS.md)
     ├── writer/     (AGENTS.md)
@@ -23,9 +24,6 @@ agents/nnw_writer_<NAME>/                   ← Coordinator agent workspace
 
 #writers-forum (Discord Forum Channel)
   └── 🧵 <agent_name>  ← users talk here to reach the coordinator
-
-Inbound:  Thread message → openclaw.json binding → coordinator
-Outbound: Coordinator → openclaw message send --channel discord --target <THREAD_ID>
 ```
 
 ## Important Notes
@@ -58,42 +56,32 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    Replace placeholders in the coordinator workspace.
    ```bash
    AGENT_DIR="../nnw_writer_<AGENT_NAME>"
+   AGENT_NAME_LOWER=$(echo "<AGENT_NAME>" | tr '[:upper:]' '[:lower:]')
 
-   # Replace genre placeholder
+   # Replace genre in root AGENTS.md and ALL instruction files (including prompts and roles)
    sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/AGENTS.md"
-   sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/IDENTITY.md"
+   sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/instructions/"*.md
 
-   # Replace writer name placeholder
-   sed -i 's/{{writer_name}}/<AGENT_NAME>/g' "$AGENT_DIR/IDENTITY.md"
-
-   # Replace agent name placeholder (for sub-agent registry names)
-   sed -i 's/{{agent_name}}/<AGENT_NAME_LOWER>/g' "$AGENT_DIR/AGENTS.md"
-   sed -i 's/{{agent_name}}/<AGENT_NAME_LOWER>/g' "$AGENT_DIR/TOOLS.md"
-
-   # Replace personality placeholder in SOUL.md
-   sed -i 's/{{personality}}/<TRAITS>/g' "$AGENT_DIR/SOUL.md"
+   # Replace agent name placeholder in all instructions
+   sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/instructions/"*.md
    ```
 
 3. **Configure Sub-Agent Files:**
-   Replace genre placeholder in each sub-agent's AGENTS.md (already copied by `cp -r`).
+   Replace genre in each sub-agent's local AGENTS.md.
    ```bash
    # Planner
    sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/agents/planner/AGENTS.md"
-   sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/agents/planner/AGENTS.md"
-
+   
    # Writer
    sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/agents/writer/AGENTS.md"
-   sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/agents/writer/AGENTS.md"
-
+   
    # Proofreader
    sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/agents/proofreader/AGENTS.md"
-   sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/agents/proofreader/AGENTS.md"
    ```
 
 4. **Register Coordinator Agent:**
    ```bash
-   AGENT_NAME_LOWER=$(echo "<AGENT_NAME>" | tr '[:upper:]' '[:lower:]')
-   COORD_MODEL=$(awk -F'|' '/`coordinator`/ {gsub(/`| /, "", $4); print $4; exit}' "$AGENT_DIR/AGENTS.md")
+   COORD_MODEL=$(awk -F'|' '/ coordinator / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
 
    openclaw agents add "$AGENT_NAME_LOWER" \
      --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER} \
@@ -101,22 +89,22 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    ```
 
 5. **Register Sub-Agents:**
-   Each sub-agent is registered with its own model.
+   Each sub-agent is registered with its own model via MODELS.md.
    ```bash
    # Planner
-   PLANNER_MODEL=$(awk -F'|' '/`planner`/ {gsub(/`| /, "", $4); print $4; exit}' "$AGENT_DIR/AGENTS.md")
+   PLANNER_MODEL=$(awk -F'|' '/ planner / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
    openclaw agents add "${AGENT_NAME_LOWER}_planner" \
      --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER}/agents/planner \
      --model "$PLANNER_MODEL"
 
    # Writer
-   WRITER_MODEL=$(awk -F'|' '/`writer`/ {gsub(/`| /, "", $4); print $4; exit}' "$AGENT_DIR/AGENTS.md")
+   WRITER_MODEL=$(awk -F'|' '/ writer / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
    openclaw agents add "${AGENT_NAME_LOWER}_writer" \
      --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER}/agents/writer \
      --model "$WRITER_MODEL"
 
    # Proofreader
-   PROOF_MODEL=$(awk -F'|' '/`proofreader`/ {gsub(/`| /, "", $4); print $4; exit}' "$AGENT_DIR/AGENTS.md")
+   PROOF_MODEL=$(awk -F'|' '/ proofreader / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
    openclaw agents add "${AGENT_NAME_LOWER}_proofreader" \
      --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER}/agents/proofreader \
      --model "$PROOF_MODEL"
@@ -139,65 +127,28 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    echo "✅ Thread mapping saved: $AGENT_NAME_LOWER → $THREAD_ID"
    ```
 
-8. **Write Discord Info into `TOOLS.md`:**
-   Append the Discord thread ID and Outbound tool command to the existing template `TOOLS.md`.
+8. **Write Discord Info into Instructions:**
+   Append the generic Discord tool out commands to the instruction files so every agent knows how to post:
    ```bash
-   cat >> "$AGENT_DIR/TOOLS.md" << EOF
+   for role in coordinator planner writer proofreader; do
+     ROLE_TITLE="$(tr '[:lower:]' '[:upper:]' <<< ${role:0:1})${role:1}"
+     
+     cat >> "$AGENT_DIR/instructions/${role}.md" << EOF
 
-   ## 6. Discord Outbound
-
-   Post messages to your Discord thread:
-
-   \`\`\`bash
-   openclaw message send --channel discord --target "${THREAD_ID}" --message "Your message here"
-   \`\`\`
-
-   ### Pre-filled values (do not modify):
-   - **Your thread ID**: \`${THREAD_ID}\`
-   - **Your agent name**: \`${AGENT_NAME_LOWER}\`
-
-   ### Message length limit:
-   Discord messages are capped at 2000 characters. For longer content, split into chunks:
-
-   \`\`\`bash
-   echo "\$CONTENT" | fold -s -w 1900 | while IFS= read -r chunk; do
-     openclaw message send --channel discord --target "${THREAD_ID}" --message "\$chunk"
-     sleep 0.5
+---
+## 🔴 Discord Rule
+When finished, execute this exact bash command to post your status:
+\`openclaw message send --channel discord --target "${THREAD_ID}" --message "[${ROLE_TITLE}] Completed step..."\`
+EOF
    done
-   \`\`\`
-   EOF
 
-   echo "✅ Discord settings appended to TOOLS.md"
+   echo "✅ Discord settings appended to instructions"
    ```
 
-9.  **Inject Mandatory Discord Posting Rule into `AGENTS.md`:**
-    ```bash
-    cat >> "$AGENT_DIR/AGENTS.md" << EOF
-
-    ---
-
-    ## 🔴 Mandatory Discord Posting Rule
-
-    You MUST post every response, every completed chapter, every status update, and every
-    acknowledgement to your Discord thread using the command defined in TOOLS.md:
-
-        openclaw message send --channel discord --target "${THREAD_ID}" --message "Your message"
-
-    There are **no exceptions** and **no silence** allowed. If you have processed a message,
-    you must post a reply. If you have written content, you must post it.
-
-    **Failure to post to Discord = task not completed.**
-
-    Your Discord thread ID is: \`${THREAD_ID}\`
-    EOF
-
-    echo "✅ Mandatory Discord posting rule appended to AGENTS.md"
-    ```
-
-10. **Introduce New Agent:**
-    ```bash
-    openclaw agent --to $AGENT_NAME_LOWER --message "Please introduce yourself in your Discord thread using the command in TOOLS.md."
-    ```
+9. **Introduce New Agent:**
+   ```bash
+   openclaw agent --to $AGENT_NAME_LOWER --message "Please introduce yourself in your Discord thread."
+   ```
 
 ---
 
@@ -222,7 +173,7 @@ To terminate and archive a Writer Agent team:
    ```bash
    if [ -n "$THREAD_ID" ] && [ "$THREAD_ID" != "null" ]; then
      openclaw message send --channel discord --target "${THREAD_ID}" \
-       --message "🛑 This agent has been retired. Thread will now be archived."
+       --message "🛑 This agent team has been retired. Thread will now be archived."
    fi
    ```
 
@@ -275,17 +226,6 @@ To terminate and archive a Writer Agent team:
 ---
 
 ## Troubleshooting
-
-### Common Errors:
-
-- **"too many arguments for 'agent'"**: You used `openclaw agent add` instead of `openclaw agents add` (plural)
-- **Folder not found**: Ensure you created the workspace folder with `cp -r` before registering
-- **"Agent already exists"**: Check if agent is already registered using `openclaw status`
-- **Wrong channel type**: Thread creation requires a Forum Channel
-- **`jq` returns `null` for token**: Check your `openclaw.json` uses `token` (not `botToken`)
-- **Binding not routing**: Confirm `bindings` is at **top level** of `openclaw.json`. Run `openclaw gateway reload` after config change
-- **Messages not reaching agent**: The parent forum channel must have `"allow": true` and `"requireMention": false`
-- **`jq` not found**: Install with `sudo apt install jq` (Linux) or `brew install jq` (macOS)
 
 ### Agent Naming:
 - Agent IDs are normalized to lowercase (e.g., `AncientWorldAffections` → `ancientworldaffections`)
