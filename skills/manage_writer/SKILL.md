@@ -30,14 +30,7 @@ agents/nnw_writer_<NAME>/                   ← Coordinator agent workspace
 
 ### ⚠️ Critical Corrections from Session Experience:
 - **Use `openclaw agents add`** (NOT `openclaw agent add`) — plural "agents" is correct
-- **`jq` must be installed** for JSON config patching
-- **Bindings go at the top level** of `openclaw.json`, NOT inside the `agents` block
-- **Forum Channel required** — thread creation via webhook only works in Forum Channels
-
-### 📋 Prerequisites:
-- Template folder `../nnw_writer_template` must exist with sub-agent templates in `agents/`
-- `openclaw.json` must already have Discord configured with bot token, guild ID, and forum channel ID
-- Thread ID mapping file: `~/.openclaw/discord_threads.json` (auto-created on first spawn)
+- **all agent names must be lowercase**
 
 ---
 
@@ -49,13 +42,14 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
 1. **Provision Coordinator Workspace:**
    Copy the template to a new workspace folder.
    ```bash
-   cp -r ../nnw_writer_template ../nnw_writer_<AGENT_NAME>
+   WORKSPACE_ROOT="$PWD/.."
+   cp -r "$WORKSPACE_ROOT/agents/nnw_writer_template" "$WORKSPACE_ROOT/agents/nnw_writer_<YOUR_AGENT_NAME>"
    ```
 
 2. **Configure Coordinator Files:**
    Replace placeholders in the coordinator workspace.
    ```bash
-   AGENT_DIR="../nnw_writer_<AGENT_NAME>"
+   AGENT_DIR="$WORKSPACE_ROOT/agents/nnw_writer_<YOUR_AGENT_NAME>"
    AGENT_NAME_LOWER=$(echo "<AGENT_NAME>" | tr '[:upper:]' '[:lower:]')
 
    # Replace genre in root AGENTS.md and ALL instruction files (including prompts and roles)
@@ -84,7 +78,7 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    COORD_MODEL=$(awk -F'|' '/ coordinator / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
 
    openclaw agents add "$AGENT_NAME_LOWER" \
-     --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER} \
+     --workspace "$AGENT_DIR" \
      --model "$COORD_MODEL"
    ```
 
@@ -94,38 +88,24 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    # Planner
    PLANNER_MODEL=$(awk -F'|' '/ planner / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
    openclaw agents add "${AGENT_NAME_LOWER}_planner" \
-     --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER}/agents/planner \
+     --workspace "$AGENT_DIR/agents/planner" \
      --model "$PLANNER_MODEL"
 
    # Writer
    WRITER_MODEL=$(awk -F'|' '/ writer / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
    openclaw agents add "${AGENT_NAME_LOWER}_writer" \
-     --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER}/agents/writer \
+     --workspace "$AGENT_DIR/agents/writer" \
      --model "$WRITER_MODEL"
 
    # Proofreader
    PROOF_MODEL=$(awk -F'|' '/ proofreader / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
    openclaw agents add "${AGENT_NAME_LOWER}_proofreader" \
-     --workspace /absolute/path/to/agents/nnw_writer_${AGENT_NAME_LOWER}/agents/proofreader \
+     --workspace "$AGENT_DIR/agents/proofreader" \
      --model "$PROOF_MODEL"
    ```
 
 6. **Create Discord Thread:**
    Use the `create_discord_thread` skill. It handles idempotency — safe to call multiple times.
-
-7. **Persist Thread ID Mapping:**
-   ```bash
-   THREAD_MAP="${HOME}/.openclaw/discord_threads.json"
-
-   [ -f "$THREAD_MAP" ] || echo '{}' > "$THREAD_MAP"
-
-   jq --arg agent "$AGENT_NAME_LOWER" \
-      --arg tid "$THREAD_ID" \
-      '.[$agent] = $tid' "$THREAD_MAP" > /tmp/thread_map_updated.json && \
-   mv /tmp/thread_map_updated.json "$THREAD_MAP"
-
-   echo "✅ Thread mapping saved: $AGENT_NAME_LOWER → $THREAD_ID"
-   ```
 
 8. **Write Discord Info into Instructions:**
    Append the generic Discord tool out commands to the instruction files so every agent knows how to post:
@@ -150,6 +130,17 @@ EOF
    openclaw agent --to $AGENT_NAME_LOWER --message "Please introduce yourself in your Discord thread."
    ```
 
+10. **Verify and Fix (Spawn):**
+    Run this validation to check your work:
+    ```bash
+    [ -d "$AGENT_DIR" ] || echo "❌ Workspace missing, re-run Step 1"
+    for role in planner writer proofreader; do
+      [ -d "$AGENT_DIR/agents/$role" ] || echo "❌ Sub-agent $role missing, re-run Step 1"
+    done
+    grep -q "{{genre}}" "$AGENT_DIR/AGENTS.md" && echo "❌ Genre not replaced in AGENTS.md, re-run Step 2"
+    openclaw agents list | grep -q "$AGENT_NAME_LOWER" || echo "❌ Agent not registered, re-run Step 4/5"
+    ```
+
 ---
 
 ### Remove
@@ -157,11 +148,11 @@ To terminate and archive a Writer Agent team:
 
 1. **Look Up Thread ID and Credentials:**
    ```bash
-   AGENT_NAME_LOWER=$(echo "<AGENT_NAME>" | tr '[:upper:]' '[:lower:]')
-   THREAD_MAP="${HOME}/.openclaw/discord_threads.json"
+   WORKSPACE_ROOT=$(git rev-parse --show-toplevel)
+   AGENT_NAME_LOWER=$(echo "<YOUR_AGENT_NAME>" | tr '[:upper:]' '[:lower:]')
    OPENCLAW_CONFIG="${OPENCLAW_CONFIG:-$HOME/.openclaw/openclaw.json}"
 
-   THREAD_ID=$(jq -r --arg agent "$AGENT_NAME_LOWER" '.[$agent]' "$THREAD_MAP")
+   THREAD_ID=$(jq -r --arg agent "$AGENT_NAME_LOWER" '.bindings[]? | select(.agentId == $agent) | .match.peer.id' "$OPENCLAW_CONFIG")
    BOT_TOKEN=$(jq -r '.channels.discord.token' "$OPENCLAW_CONFIG")
 
    if [ "$THREAD_ID" = "null" ] || [ -z "$THREAD_ID" ]; then
@@ -177,33 +168,8 @@ To terminate and archive a Writer Agent team:
    fi
    ```
 
-3. **Archive the Discord Thread:**
-   ```bash
-   if [ -n "$THREAD_ID" ] && [ "$THREAD_ID" != "null" ]; then
-     curl -s -X PATCH \
-       -H "Authorization: Bot ${BOT_TOKEN}" \
-       -H "Content-Type: application/json" \
-       -d '{"archived": true, "locked": true}' \
-       "https://discord.com/api/v10/channels/${THREAD_ID}"
-
-     echo "✅ Discord thread $THREAD_ID archived"
-   fi
-   ```
-
-4. **Remove Binding from `openclaw.json`:**
-   ```bash
-   jq --arg agentId "$AGENT_NAME_LOWER" \
-      'del(.bindings[] | select(.agentId == $agentId))' \
-      "$OPENCLAW_CONFIG" > /tmp/openclaw_updated.json && \
-   mv /tmp/openclaw_updated.json "$OPENCLAW_CONFIG"
-   ```
-
-5. **Remove from Thread Mapping:**
-   ```bash
-   jq --arg agent "$AGENT_NAME_LOWER" \
-      'del(.[$agent])' "$THREAD_MAP" > /tmp/thread_map_updated.json && \
-   mv /tmp/thread_map_updated.json "$THREAD_MAP"
-   ```
+   # Step 3: Archive Discord Thread and Remove Binding
+   # (Delegate to skills/discord_thread/SKILL.md Archive function)
 
 6. **Unregister All Agents from OpenClaw:**
    ```bash
@@ -215,12 +181,20 @@ To terminate and archive a Writer Agent team:
 
 7. **Remove Workspace:**
    ```bash
-   rm -rf agents/nnw_writer_<AGENT_NAME>
+   rm -rf "$WORKSPACE_ROOT/agents/nnw_writer_<YOUR_AGENT_NAME>"
    ```
 
 8. **Reload OpenClaw Gateway:**
    ```bash
    openclaw gateway restart 
+   ```
+
+9. **Verify and Fix (Remove):**
+   Run this validation to check your work:
+   ```bash
+   WORKSPACE_ROOT=$(git rev-parse --show-toplevel)
+   [ ! -d "$WORKSPACE_ROOT/agents/nnw_writer_<YOUR_AGENT_NAME>" ] || echo "❌ Workspace still exists, re-run Step 7"
+   openclaw agents list | grep -q "$AGENT_NAME_LOWER" && echo "❌ Agent still registered, re-run Step 6"
    ```
 
 ---

@@ -3,7 +3,7 @@ name: create_discord_thread
 description: Creates a named thread in a Discord Forum Channel with idempotency check. Can be called by any agent that needs its own Discord thread.
 ---
 
-# Create Discord Thread Skill
+# Discord Thread Skill
 
 Creates a named thread in the configured Discord Forum Channel. Safe to call multiple times —
 skips creation if a thread with the same name already exists.
@@ -25,7 +25,7 @@ AGENT_NAME="<YOUR_AGENT_NAME>"
 
 ---
 
-## Steps
+## Function: Create
 
 1. **Resolve variables:**
    ```bash
@@ -129,7 +129,51 @@ AGENT_NAME="<YOUR_AGENT_NAME>"
    `$THREAD_ID` is now set and ready for the caller (e.g. `manage_writer`) to use for
    TOOLS.md and agent.md injection.
    ```bash
-   echo "THREAD_ID=$THREAD_ID"
+   echo "THREAD_ID=\$THREAD_ID"
+   ```
+
+---
+
+## Function: Archive
+
+To archive an autonomous Writer Agent's Discord thread and remove its binding:
+
+1. **Resolve variables:**
+   ```bash
+   AGENT_NAME_LOWER=$(echo "$AGENT_NAME" | tr '[:upper:]' '[:lower:]')
+   OPENCLAW_CONFIG="${OPENCLAW_CONFIG:-$HOME/.openclaw/openclaw.json}"
+
+   BOT_TOKEN=$(jq -r '.channels.discord.token' "$OPENCLAW_CONFIG")
+   THREAD_ID=$(jq -r --arg agent "$AGENT_NAME_LOWER" '.bindings[]? | select(.agentId == $agent) | .match.peer.id' "$OPENCLAW_CONFIG")
+   ```
+
+2. **Archive the Discord Thread:**
+   ```bash
+   if [ -n "$THREAD_ID" ] && [ "$THREAD_ID" != "null" ]; then
+     curl -s -X PATCH \
+       -H "Authorization: Bot ${BOT_TOKEN}" \
+       -H "Content-Type: application/json" \
+       -d '{"archived": true, "locked": true}' \
+       "https://discord.com/api/v10/channels/${THREAD_ID}"
+
+     echo "✅ Discord thread $THREAD_ID archived"
+   fi
+   ```
+
+3. **Remove Binding from `openclaw.json`:**
+   ```bash
+   jq --arg agentId "$AGENT_NAME_LOWER" \
+      'del(.bindings[]? | select(.agentId == $agentId))' \
+      "$OPENCLAW_CONFIG" > /tmp/openclaw_updated.json && \
+   mv /tmp/openclaw_updated.json "$OPENCLAW_CONFIG"
+   echo "✅ Binding removed for $AGENT_NAME_LOWER"
+   ```
+
+4. **Verify and Fix (Archive):**
+   Run this validation to check your work:
+   ```bash
+   # Check if binding is gone
+   jq -r --arg agent "$AGENT_NAME_LOWER" '.bindings[]? | select(.agentId == $agent) | .agentId' "$OPENCLAW_CONFIG" | grep -q "$AGENT_NAME_LOWER" && echo "❌ Binding still exists, re-run Step 3"
    ```
 
 ---
