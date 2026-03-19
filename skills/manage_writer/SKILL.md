@@ -137,8 +137,8 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
 
 ---
 ## 🔴 Discord Rule
-When finished, execute this exact bash command to post your status:
-\`openclaw message send --channel discord --target "${THREAD_ID}" --message "[${ROLE_TITLE}] Completed step..."\`
+When you finish each step, you MUST post your response to discord thread. Do not stay silent upon completing a step.
+\`openclaw message send --channel discord --target "${THREAD_ID}" --message "[${ROLE_TITLE}] [P[X]-S[Y]] [Completed] [your response]"\`
 EOF
    done
 
