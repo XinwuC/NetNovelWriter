@@ -9,23 +9,23 @@ plus the WORLD_BIBLE.md and OUTLINE.md conventions.
 
 **Trigger:** Called automatically in Phase 2 Step 3, or author says "analyse arcs" / "tension analysis" / "update arc plan".
 **Requires:** `novel/OUTLINE.md` must exist. If it does not, stop and tell the author to complete Phase 2 first.
-**Output file:** `novel/story_arcs.md` — always overwrite with latest version
+**Output file:** `novel/STORY_ARCS.md` — always overwrite with latest version
 
 **Distinct purpose from OUTLINE.md:**
 - `OUTLINE.md` answers: *what* happens in each volume (skeleton, written once, rarely changed)
-- `story_arcs.md` answers: *how* tension flows chapter-by-chapter across that skeleton (living document, updated as writing progresses)
+- `STORY_ARCS.md` answers: *how* tension flows chapter-by-chapter across that skeleton (living document, updated as writing progresses)
 
 ### Story Arc Planner Workflow
 
 1. Read `novel/OUTLINE.md` — this is the authoritative source of volume structure. Do NOT re-derive or duplicate its volume data.
-2. Read `novel/WORLD_BIBLE.md` and `novel/characters.md`
+2. Read `novel/WORLD_BIBLE.md` and `novel/CHARACTERS.md`
 3. For each volume in OUTLINE.md, build the chapter-level beat sheet — assign each chapter range to a specific tension event and identify which tension layer it advances
 4. Build the cross-volume 4-layer tension tracker — show which layer is active at any given chapter range across all volumes
 5. Map inter-volume dependency chains (what each volume's ending enables in the next)
 6. Identify and flag flat zones — chapter ranges where no tension layer advances for >5 consecutive chapters
-7. Write `novel/story_arcs.md` and confirm with author
+7. Write `novel/STORY_ARCS.md` and confirm with author
 
-### story_arcs.md Format
+### STORY_ARCS.md Format
 
 > This file does NOT duplicate volume structure from OUTLINE.md.
 > It adds tension analysis on top. Reference OUTLINE.md for volume skeleton data.
@@ -88,20 +88,20 @@ _Updated each time this file is regenerated._
 
 ## Role: Foreshadowing Specialist
 
-**Trigger:** Called automatically in Phase 2 Step 4 (after story_arcs.md exists), or author says "add foreshadowing" / "plant clues".
-**Requires:** `novel/story_arcs.md` must exist. If it does not, run Story Arc Planner first.
-**Output file:** `novel/foreshadowing.md` — append new entries, never delete existing ones
+**Trigger:** Called automatically in Phase 2 Step 4 (after STORY_ARCS.md exists), or author says "add foreshadowing" / "plant clues".
+**Requires:** `novel/STORY_ARCS.md` must exist. If it does not, run Story Arc Planner first.
+**Output file:** `novel/FORESHADOWING.md` — append new entries, never delete existing ones
 
 ### Foreshadowing Specialist Workflow
 
-1. Read `novel/WORLD_BIBLE.md`, `novel/story_arcs.md`, `novel/characters.md`
+1. Read `novel/WORLD_BIBLE.md`, `novel/STORY_ARCS.md`, `novel/CHARACTERS.md`
 2. Identify the 5–10 most important future plot twists and reveals across all volumes
 3. For each twist, design 2–3 early clues that feel natural in early chapters but are recontextualized later
 4. Assign a plant chapter (when the clue appears) and a payoff chapter (when it resolves)
 5. Flag any clue that would require retconning already-written chapters — mark as `[RETROACTIVE]`
-6. Write/append to `novel/foreshadowing.md`
+6. Write/append to `novel/FORESHADOWING.md`
 
-### foreshadowing.md Format
+### FORESHADOWING.md Format
 
 ```markdown
 # Foreshadowing Registry — [Novel Title]
@@ -148,19 +148,19 @@ based on current chapter count and plant schedule:
 ## Role: Character Development Specialist
 
 **Trigger:** Author says "develop characters", "character profiles", or called automatically in Phase 1 Step 3.
-**Output file:** `novel/characters.md` — always overwrite with latest version; track version date at top
+**Output file:** `novel/CHARACTERS.md` — always overwrite with latest version; track version date at top
 
 ### Character Development Specialist Workflow
 
-1. Read `novel/WORLD_BIBLE.md` and `novel/story_arcs.md` (if they exist)
+1. Read `novel/WORLD_BIBLE.md` and `novel/STORY_ARCS.md` (if they exist)
 2. Generate the protagonist profile in full
 3. Generate the primary antagonist and antagonist hierarchy
 4. Generate supporting characters (minimum 3: ally, rival, mentor/elder)
 5. Generate relationship map as a matrix
 6. Confirm all names are consistent with STYLE_GUIDE.md naming conventions
-7. Write `novel/characters.md` and confirm with author
+7. Write `novel/CHARACTERS.md` and confirm with author
 
-### characters.md Format
+### CHARACTERS.md Format
 
 ```markdown
 # Character Profiles — [Novel Title]
