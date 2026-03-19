@@ -7,30 +7,16 @@ description: A skill for the Master Agent to spawn and remove Writer Agents. Thi
 
 ⚠️ **This is not a CLI tool.** There is no `manage_writer spawn` or `manage_writer remove` command.
 
-To use this skill, read the relevant section below (Spawn or Remove) and **execute each bash step sequentially in your shell**, substituting the placeholder values.
+To use this skill, read the relevant section below (Spawn or Remove) and **execute each bash step strictly and sequentially in your shell**, substituting the placeholder values.
 
-Each Writer Agent is a **multi-agent team**: one coordinator agent + three specialist sub-agents (planner, writer, proofreader). Each gets its own Discord thread.
-
-## Architecture
-
-```
-agents/nnw_writer_<NAME>/                   ← Coordinator agent workspace
-├── AGENTS.md, MODELS.md
-├── instructions/                            ← Role prompts and rules
-└── agents/                                  ← Sub-agent workspaces
-    ├── planner/    (AGENTS.md)
-    ├── writer/     (AGENTS.md)
-    └── proofreader/(AGENTS.md)
-
-#writers-forum (Discord Forum Channel)
-  └── 🧵 <agent_name>  ← users talk here to reach the coordinator
-```
+Each Writer Agent is a **multi-agent team**: one coordinator agent + three specialist sub-agents (planner, writer, proofreader). Only the coordinator agent has its own Discord thread.
 
 ## Important Notes
 
 ### ⚠️ Critical Corrections from Session Experience:
 - **Use `openclaw agents add`** (NOT `openclaw agent add`) — plural "agents" is correct
 - **all agent names must be lowercase**
+- **Strictly follow the order of steps** ⚠️ DO NOT skip step
 
 ---
 
@@ -105,7 +91,7 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    ```
 
 6. **Create Discord Thread:**
-   Use the `create_discord_thread` skill. It handles idempotency — safe to call multiple times.
+   Use the `discord_thread` skill. It handles idempotency — safe to call multiple times.
 
 8. **Write Discord Info into Instructions:**
    Append the generic Discord tool out commands to the instruction files so every agent knows how to post:

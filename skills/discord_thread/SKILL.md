@@ -1,6 +1,6 @@
 ---
-name: create_discord_thread
-description: Creates a named thread in a Discord Forum Channel with idempotency check. Can be called by any agent that needs its own Discord thread.
+name: discord_thread
+description: Creates or Archives a named thread in a Discord Forum Channel with idempotency check. Can be called by any agent that needs its own Discord thread.
 ---
 
 # Discord Thread Skill
