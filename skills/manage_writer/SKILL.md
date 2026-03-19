@@ -15,7 +15,7 @@ Each Writer Agent is a **multi-agent team**: one coordinator agent + three speci
 
 ```
 agents/nnw_writer_<NAME>/                   ← Coordinator agent workspace
-├── AGENTS.md, MODELS.md, workflow.md, roles.md
+├── AGENTS.md, MODELS.md
 ├── instructions/                            ← Role prompts and rules
 └── agents/                                  ← Sub-agent workspaces
     ├── planner/    (AGENTS.md)
@@ -130,10 +130,10 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
 8. **Write Discord Info into Instructions:**
    Append the generic Discord tool out commands to the instruction files so every agent knows how to post:
    ```bash
-   for role in coordinator planner writer proofreader; do
+   for role in planner writer proofreader; do
      ROLE_TITLE="$(tr '[:lower:]' '[:upper:]' <<< ${role:0:1})${role:1}"
      
-     cat >> "$AGENT_DIR/instructions/${role}.md" << EOF
+     cat >> "$AGENT_DIR/agents/${role}/AGENTS.md" << EOF
 
 ---
 ## 🔴 Discord Rule
