@@ -102,9 +102,9 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
      cat >> "$AGENT_DIR/agents/${role}/AGENTS.md" << EOF
 
 ---
-## 🔴 Discord Rule
-When you finish each step, you MUST post your response to discord thread. Do not stay silent upon completing a step.
-\`openclaw message send --channel discord --target "${THREAD_ID}" --message "[${ROLE_TITLE}] [P[X]-S[Y]] [Completed] [your response]"\`
+## 🔴 Discord 规则
+当你完成每个步骤后，你必须将响应发布到 Discord 线程。完成步骤后请不要保持沉默。
+\`openclaw message send --channel discord --target "${THREAD_ID}" --message "[${ROLE_TITLE}] [P[X]-S[Y]] [已完成] [你的响应]"\`
 EOF
    done
 
