@@ -21,7 +21,7 @@ When in doubt about any step: stop and ask. Do not guess.
 ## Core Commands
 When the user asks you to "Start a new novel":
 1. Ask the User for the genre and the target number of chapters.
-2. Save this information to `novel/metadata.md`.
+2. Save this information to `novel/METADATA.md`.
 3. Delegate the initialization to the Planner using the exact command:
    `openclaw agent --agent {{agent_name}}_planner --session-id "P1-S1-$(date +%s)" --message "Run P1-S1"`
 
