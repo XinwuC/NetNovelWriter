@@ -77,11 +77,13 @@
     - **Trigger In:** `"Revise Dialog for Chapter X"`
     - **Action:** Writer reads `instructions/prose_writer.md` and revises dialog, overwriting `novel/chapters/drafts/chapter_X_draft.md`.
     - **Next (Proofreader):**
-        - **Payload:** `"Proofread Chapter X"`
+        - **Payload:** `"/reasoning off\nProofread Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_proofreader --message "{{payload}}"`
 
 - **Copy_Editing**:
     - **Trigger In:** `"/reasoning off\nProofread Chapter X"`
     - **Action:** Proofreader reads `instructions/proofreader.md` and fixes grammar, outputting `novel/chapters/chapter_X_final.md`.
     - **Complete means:** `novel/chapters/chapter_X_final.md` exists AND Coordinator is woken.
-    - **Next:** Wake Coordinator: `"Chapter X is COMPLETE."` Do NOT auto-trigger next chapter.
+    - **Next:** Wake Coordinator. Do NOT auto-trigger next chapter.
+      - **Payload:** `"Chapter X is COMPLETE"`
+      - **Cmd:** `openclaw agent --agent {{agent_name}}_coordinator --message "{{payload}}"`
