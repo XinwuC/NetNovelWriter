@@ -1,5 +1,5 @@
 ## WhatsApp Messaging
-Use the `openclaw agent` command to send Whatsapp messages.
+Use the `openclaw message send` command to send Whatsapp messages.
 ```bash
-openclaw agent --to "+<phone_number>" --message "<your message here>"
+openclaw message send --channel whatsapp --target "<phone_number>" --message "<message>"
 ```

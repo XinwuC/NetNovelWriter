@@ -9,106 +9,117 @@
 
 **Triggered by:** User command `"Start a new novel"` or `"Run [Step_Name]"`
 
-- **World Building**:
-    - **Trigger In:** `"Run World Building"`
+- **P1-S1: World Building**:
+    - **Trigger In:** `"Run P1-S1: World Building"`
 
     - **Action:** Planner follows `instructions/world_builder.md` and generates `novel/WORLD_BIBLE.md`.
 
-    - **Next:** `sessions_spawn(task="Run Character Profiling", cleanup="delete")`
+    - **Next:** `sessions_spawn(task="Run P1-S2: Character Profiling", cleanup="delete")`
 
 
-- **Character Profiling**:
-    - **Trigger In:** `"Run Character Profiling"`
+
+- **P1-S2: Character Profiling**:
+    - **Trigger In:** `"Run P1-S2: Character Profiling"`
 
     - **Action:** Planner follows `instructions/character_development.md` and generates `novel/CHARACTERS.md`.
-    - **Next:** `sessions_spawn(task="Run Plot Skeletons", cleanup="delete")`
+    - **Next:** `sessions_spawn(task="Run P1-S3: Plot Skeletons", cleanup="delete")`
 
 
-- **Plot Skeletons**:
-    - **Trigger In:** `"Run Plot Skeletons"`
+
+- **P1-S3: Plot Skeletons**:
+    - **Trigger In:** `"Run P1-S3: Plot Skeletons"`
 
     - **Action:** Planner follows `instructions/outline_planner.md` and generates `novel/OUTLINE.md`.
 
-    - **Next:** `sessions_spawn(task="Run Story Arcs", cleanup="delete")`
+    - **Next:** `sessions_spawn(task="Run P2-S1: Story Arcs", cleanup="delete")`
 
 
-- **Story Arcs**:
-    - **Trigger In:** `"Run Story Arcs"`
+
+- **P2-S1: Story Arcs**:
+    - **Trigger In:** `"Run P2-S1: Story Arcs"`
 
     - **Action:** Planner follows `instructions/story_arc_planner.md` and generates `novel/STORY_ARCS.md`.
-    - **Next:** `sessions_spawn(task="Run Foreshadowing", cleanup="delete")`
+    - **Next:** `sessions_spawn(task="Run P2-S2: Foreshadowing", cleanup="delete")`
 
-- **Foreshadowing**:
-    - **Trigger In:** `"Run Foreshadowing"`
+
+- **P2-S2: Foreshadowing**:
+    - **Trigger In:** `"Run P2-S2: Foreshadowing"`
     - **Action:** Planner follows `instructions/foreshadowing_specialist.md` and generates `novel/FORESHADOWING.md`.
-    - **Next:** `sessions_spawn(task="Run Book Title", cleanup="delete")`
+    - **Next:** `sessions_spawn(task="Run P2-S3: Book Title", cleanup="delete")`
 
 
-- **Book Title**:
-    - **Trigger In:** `"Run Book Title"`
+
+- **P2-S3: Book Title**:
+    - **Trigger In:** `"Run P2-S3: Book Title"`
 
     - **Action:** Planner proposes book title, adds to `novel/METADATA.md`, and wakes Coordinator.
+
 
 ## Phase 3 & 4: Chapter Loop
 
 **Trigger:** User command `"Start next chapter"` or `"Run Briefing for Ch X"`.
 **🚨 Hold Gate:** Do NOT start Ch X+1 until Ch X is COMPLETE. Auto-triggering forbidden.
 
-- **Briefing**:
-    - **Trigger In:** `"Generate Chapter Brief"`
+- **P3-S1: Briefing**:
+    - **Trigger In:** `"Run P3-S1: Briefing"`
     - **Prerequisite:** `novel/chapters/chapter_(X-1)_final.md` must exist except for the first chapter.
     - **Action:** Planner follows `instructions/chapter_outliner.md` and saves brief to `novel/chapters/briefs/chapter_X_brief.md`.
     - **Next (Writer):**
-        - **Payload:** `"Draft Chapter X. Brief: {read novel/chapters/briefs/chapter_X_brief.md}"`
+        - **Payload:** `"Run P3-S2: Draft Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_writer --message "{{payload}}"`
 
-- **Prose Drafting**:
-    - **Trigger In:** `"Draft Chapter X"`
+
+- **P3-S2: Prose Drafting**:
+    - **Trigger In:** `"Run P3-S2: Draft Chapter X"`
 
     - **Action:** Writer follows `instructions/prose_writer.md` and writes `novel/chapters/drafts/chapter_X_draft.md`.
 
     - **Next (Proofreader):**
-        - **Payload:** `"/reasoning on\nAudit Chapter X"`
+        - **Payload:** `"/reasoning on\nRun P3-S3: Audit Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_proofreader --message "{{payload}}"`
 
-- **Quality Audit**:
-    - **Trigger In:** `"/reasoning on\nAudit Chapter X"`
+
+- **P3-S3: Quality Audit**:
+    - **Trigger In:** `"/reasoning on\nRun P3-S3: Audit Chapter X"`
     - **Action:** Proofreader follows `instructions/auditor.md` and evaluates for style and quality.
 
     - **Outcome Pass:**
         - **Action:** Proceed to Dialog Polishing.
-        - **Payload:** `"Revise Dialog for Chapter X"`
+        - **Payload:** `"Run P4-S1: Revise Dialog for Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_writer --message "{{payload}}"`
 
     - **Outcome Fail (< 3 attempts):**
         - **Action:** Save `novel/chapters/revisions/chapter_X_vN.md` and `novel/chapters/audits/chapter_X_audit_vN.md`. Proceed to Prose Revision.
-        - **Payload:** `"Run Prose Revision using novel/chapters/audits/chapter_X_audit_vN.md"`
+        - **Payload:** `"Run P3-S4: Prose Revision using novel/chapters/audits/chapter_X_audit_vN.md"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_writer --message "{{payload}}"`
 
     - **Outcome Fail Cap (>= 3 attempts fallback):**
         - **Action:** Overwrite `chapter_X_draft.md` with best revision. Proceed to Dialog Polishing.
-        - **Payload:** `"Revise Dialog for Chapter X (Fallback)"`
+        - **Payload:** `"Run P4-S1: Revise Dialog for Chapter X (Fallback)"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_writer --message "{{payload}}"`
 
-- **Prose Revision**:
-    - **Trigger In:** `"Run Prose Revision using novel/chapters/audits/chapter_X_audit_vN.md"`
+
+- **P3-S4: Prose Revision**:
+    - **Trigger In:** `"Run P3-S4: Prose Revision using novel/chapters/audits/chapter_X_audit_vN.md"`
     - **Action:** Writer follows `instructions/prose_writer.md` and applies the specified audit report.
     - **Next:**
-        - **Payload:** `"/reasoning on\nAudit Chapter X"`
+        - **Payload:** `"/reasoning on\nRun P3-S3: Audit Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_proofreader --message "{{payload}}"`
 
 
-- **Dialog Polishing**:
-    - **Trigger In:** `"Revise Dialog for Chapter X"`
+
+- **P4-S1: Dialog Polishing**:
+    - **Trigger In:** `"Run P4-S1: Revise Dialog for Chapter X"`
 
     - **Action:** Writer follows `instructions/prose_writer.md` and revises dialog overwriting `novel/chapters/drafts/chapter_X_draft.md`.
 
     - **Next (Proofreader):**
-        - **Payload:** `"/reasoning off\nProofread Chapter X"`
+        - **Payload:** `"/reasoning off\nRun P4-S2: Proofread Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_proofreader --message "{{payload}}"`
 
-- **Copy Editing**:
-    - **Trigger In:** `"/reasoning off\nProofread Chapter X"`
+
+- **P4-S2: Copy Editing**:
+    - **Trigger In:** `"/reasoning off\nRun P4-S2: Proofread Chapter X"`
 
     - **Action:** Proofreader follows `instructions/proofreader.md` and fixes grammar outputting `novel/chapters/chapter_X_final.md`.
 
@@ -117,9 +128,11 @@
       - **Payload:** `"Chapter X is COMPLETE"`
       - **Cmd:** `openclaw agent --agent {{agent_name}}_coordinator --message "{{payload}}"`
 
-- **Session Reset**:
+
+- **P4-S3: Session Reset**:
 
     - **Trigger In:** `"Chapter X is COMPLETE"`
+
     - **Cmds:**
       `openclaw agent --agent {{agent_name}}_planner --message "/new"`
       `openclaw agent --agent {{agent_name}}_writer --message "/new"`
