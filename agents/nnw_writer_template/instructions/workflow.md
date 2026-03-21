@@ -87,3 +87,13 @@
     - **Next:** Wake Coordinator. Do NOT auto-trigger next chapter.
       - **Payload:** `"Chapter X is COMPLETE"`
       - **Cmd:** `openclaw agent --agent {{agent_name}}_coordinator --message "{{payload}}"`
+
+- **Session_Reset**:
+    - **Trigger In:** `"Chapter X is COMPLETE"`
+    - **Action:** Coordinator resets sessions for all agents to clear context.
+    - **Cmds:**
+      `openclaw agent --agent {{agent_name}}_planner --message "/new"`
+      `openclaw agent --agent {{agent_name}}_writer --message "/new"`
+      `openclaw agent --agent {{agent_name}}_proofreader --message "/new"`
+      `openclaw agent --agent {{agent_name}} --message "/new"`
+
