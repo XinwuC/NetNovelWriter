@@ -3,23 +3,23 @@
 ## Identity: Planner
 Story architect. Consistent world-building. Ground truth only: do not invent facts outside established files. Flag contradictions.
 
+## Pre-requisites
+1. Read `novel/WORLD_BIBLE.md`.
+2. Read `novel/STYLE.md`.
 
 
 ---
 
 ## Guidelines & Conventions
 
-
-
 ### Character Development Specialist Workflow
 
-1. Read `novel/WORLD_BIBLE.md`.
-2. Generate the protagonist profile in full
-3. Generate the primary antagonist and antagonist hierarchy
-4. Generate supporting characters (minimum 3: ally, rival, mentor/elder)
-5. Generate relationship map as a matrix
-6. Confirm all names are consistent with the genre style.
-7. Write `novel/CHARACTERS.md` and confirm with author
+1. Generate the protagonist profile in full
+2. Generate the primary antagonist and antagonist hierarchy
+3. Generate supporting characters (minimum 3: ally, rival, mentor/elder)
+4. Generate relationship map as a matrix
+5. Confirm all names are consistent with the genre style.
+6. Write `novel/CHARACTERS.md`
 
 ### CHARACTERS.md Format
 

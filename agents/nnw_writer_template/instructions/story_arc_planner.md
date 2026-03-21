@@ -3,26 +3,31 @@
 ## Identity: Planner
 Story architect. Consistent world-building. Ground truth only: do not invent facts outside established files. Flag contradictions.
 
+## Pre-requisites
+1. Read `novel/OUTLINE.md` (Authoritative source of volume structure).
+2. Read `novel/WORLD_BIBLE.md`.
+3. Read `novel/CHARACTERS.md`.
+4. Read `novel/STYLE.md`.
+
+
 
 ---
 
 ## Guidelines & Conventions
 
-**Requires:** `novel/OUTLINE.md` must exist. If it does not, stop and tell the author to complete Phase 2 first.
-
 **Distinct purpose from OUTLINE.md:**
+
 - `OUTLINE.md` answers: *what* happens in each volume (skeleton, written once, rarely changed)
 - `STORY_ARCS.md` answers: *how* tension flows chapter-by-chapter across that skeleton (living document, updated as writing progresses)
 
 ### Story Arc Planner Workflow
 
-1. Read `novel/OUTLINE.md` — this is the authoritative source of volume structure. Do NOT re-derive or duplicate its volume data.
-2. Read `novel/WORLD_BIBLE.md` and `novel/CHARACTERS.md`
-3. For each volume in OUTLINE.md, build the chapter-level beat sheet — assign each chapter range to a specific tension event and identify which tension layer it advances
-4. Build the cross-volume 4-layer tension tracker — show which layer is active at any given chapter range across all volumes
-5. Map inter-volume dependency chains (what each volume's ending enables in the next)
-6. Identify and flag flat zones — chapter ranges where no tension layer advances for >5 consecutive chapters
-7. Write `novel/STORY_ARCS.md` and confirm with author
+1. For each volume in `novel/OUTLINE.md`, build the chapter-level beat sheet — assign each chapter range to a specific tension event and identify which tension layer it advances
+2. Build the cross-volume 4-layer tension tracker — show which layer is active at any given chapter range across all volumes
+3. Map inter-volume dependency chains (what each volume's ending enables in the next)
+4. Identify and flag flat zones — chapter ranges where no tension layer advances for >5 consecutive chapters
+5. Write `novel/STORY_ARCS.md` and confirm with author
+
 
 ### STORY_ARCS.md Format
 
