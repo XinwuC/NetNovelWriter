@@ -11,7 +11,7 @@
 
 - **World_Building**:
     - **Trigger In:** `"Run World_Building"`
-    - **Action:** Planner reads `instructions/world_builder.md` and generates `novel/WORLD_BIBLE.md`.
+    - **Action:** Planner reads `instructions/world_builder.md`, **reads `novel/STYLE.md`**, and generates `novel/WORLD_BIBLE.md`.
     - **Next:** `sessions_spawn(task="Run Character_Profiling", cleanup="delete")`
 
 - **Character_Profiling**:
@@ -21,7 +21,7 @@
 
 - **Plot_Skeletons**:
     - **Trigger In:** `"Run Plot_Skeletons"`
-    - **Action:** Planner reads `instructions/outline_planner.md` and generates `novel/OUTLINE.md`.
+    - **Action:** Planner reads `instructions/outline_planner.md`, **reads `novel/STYLE.md`**, and generates `novel/OUTLINE.md`.
     - **Next:** `sessions_spawn(task="Run Story_Arcs", cleanup="delete")`
 
 - **Story_Arcs**:
@@ -53,14 +53,14 @@
 
 - **Prose_Drafting**:
     - **Trigger In:** `"Draft Chapter X"`
-    - **Action:** Writer reads `instructions/prose_writer.md` and writes `novel/chapters/drafts/chapter_X_draft.md`.
+    - **Action:** Writer reads `instructions/prose_writer.md`, **reads `novel/STYLE.md`**, and writes `novel/chapters/drafts/chapter_X_draft.md`.
     - **Next (Proofreader):**
         - **Payload:** `"/reasoning on\nAudit Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_proofreader --message "{{payload}}"`
 
 - **Quality_Audit**:
     - **Trigger In:** `"/reasoning on\nAudit Chapter X"`
-    - **Action:** Proofreader reads `instructions/auditor.md` and evaluates for cliffhanger, continuity, quality.
+    - **Action:** Proofreader reads `instructions/auditor.md`, **reads `novel/STYLE.md`**, and evaluates for style and quality.
     - **Pass (Writer Dialog):**
         - **Payload:** `"Revise Dialog for Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_writer --message "{{payload}}"`
@@ -75,14 +75,14 @@
 
 - **Dialog_Polishing**:
     - **Trigger In:** `"Revise Dialog for Chapter X"`
-    - **Action:** Writer reads `instructions/prose_writer.md` and revises dialog, overwriting `novel/chapters/drafts/chapter_X_draft.md`.
+    - **Action:** Writer reads `instructions/prose_writer.md`, **reads `novel/STYLE.md`**, and revises dialog overwriting `novel/chapters/drafts/chapter_X_draft.md`.
     - **Next (Proofreader):**
         - **Payload:** `"/reasoning off\nProofread Chapter X"`
         - **Cmd:** `openclaw agent --agent {{agent_name}}_proofreader --message "{{payload}}"`
 
 - **Copy_Editing**:
     - **Trigger In:** `"/reasoning off\nProofread Chapter X"`
-    - **Action:** Proofreader reads `instructions/proofreader.md` and fixes grammar, outputting `novel/chapters/chapter_X_final.md`.
+    - **Action:** Proofreader reads `instructions/proofreader.md`, **reads `novel/STYLE.md`**, and fixes grammar outputting `novel/chapters/chapter_X_final.md`.
     - **Complete means:** `novel/chapters/chapter_X_final.md` exists AND Coordinator is woken.
     - **Next:** Wake Coordinator. Do NOT auto-trigger next chapter.
       - **Payload:** `"Chapter X is COMPLETE"`
@@ -90,7 +90,6 @@
 
 - **Session_Reset**:
     - **Trigger In:** `"Chapter X is COMPLETE"`
-    - **Action:** Coordinator resets sessions for all agents to clear context.
     - **Cmds:**
       `openclaw agent --agent {{agent_name}}_planner --message "/new"`
       `openclaw agent --agent {{agent_name}}_writer --message "/new"`

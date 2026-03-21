@@ -38,26 +38,11 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    AGENT_DIR="$WORKSPACE_ROOT/agents/nnw_writer_<YOUR_AGENT_NAME>"
    AGENT_NAME_LOWER=$(echo "<AGENT_NAME>" | tr '[:upper:]' '[:lower:]')
 
-   # Replace genre in root AGENTS.md and ALL instruction files (including prompts and roles)
-   sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/AGENTS.md"
-   sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/instructions/"*.md
-
    # Replace agent name placeholder in all instructions
    sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/instructions/"*.md
    ```
 
-3. **Configure Sub-Agent Files:**
-   Replace genre in each sub-agent's local AGENTS.md.
-   ```bash
-   # Planner
-   sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/agents/planner/AGENTS.md"
-   
-   # Writer
-   sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/agents/writer/AGENTS.md"
-   
-   # Proofreader
-   sed -i 's/{{genre}}/<GENRE>/g' "$AGENT_DIR/agents/proofreader/AGENTS.md"
-   ```
+
 
 4. **Register Coordinator Agent:**
    ```bash
