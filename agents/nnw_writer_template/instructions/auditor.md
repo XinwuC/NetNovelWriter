@@ -33,6 +33,14 @@ Check for contradictions against `WORLD_BIBLE.md` and `CHARACTERS.md`.
 - **Pacing:** Verify if action scenes have varied sentence lengths (no monotonous rhythm).
 
 ### 4. Workflow & Archiving (if any check fails)
-The Auditor must archive the failed draft and the audit report
-1. **Archive Current File**: Save the current draft `novel/chapters/drafts/chapter_X_draft.md` to `novel/chapters/revisions/chapter_X_v[AttemptCount].md`.
-2. **Save Audit Report**: Save the final audit assessment to `novel/chapters/audits/chapter_X_audit_v[AttemptCount].md`
+Determine the attempt number sequentially by checking file existence (capping at 3 attempts):
+
+1. **Calculate N:**
+   - List contents of `novel/chapters/revisions/`.
+   - If `chapter_X_v1.md` is **NOT** found, set `N = 1`.
+   - If `chapter_X_v1.md` **is found**, check for `chapter_X_v2.md`.
+   - If `chapter_X_v2.md` is **NOT** found, set `N = 2`.
+   - If `chapter_X_v2.md` **is found**, set `N = 3`.
+
+2. **Archive Current File**: Save the failed draft `novel/chapters/drafts/chapter_X_draft.md` to `novel/chapters/revisions/chapter_X_vN.md`.
+3. **Save Audit Report**: Save the assessment report to `novel/chapters/audits/chapter_X_audit_vN.md`.
