@@ -33,17 +33,6 @@ Check for contradictions against `WORLD_BIBLE.md` and `CHARACTERS.md`.
 - **Pacing:** Verify if action scenes have varied sentence lengths (no monotonous rhythm).
 
 ### 4. Workflow & Archiving (if any check fails)
-The Auditor must archive the failed draft and the audit report before triggering the Writer.
-1. **Archive Current File**: Save the current `novel/chapters/drafts/chapter_X_draft.md` to `novel/chapters/revisions/chapter_X_v[AttemptCount].md`.
-2. **Save Audit Report**: Save the final audit assessment to `novel/chapters/audits/chapter_X_audit_v[AttemptCount].md`.
-3. **Trigger Writer**: Use `openclaw agent` to notify the Writer, pointing them to the Audit Report file.
-
-### Combined Rewrite Prompt Template (if any check fails)
-When triggering the Writer for a rewrite, consolidate all issues into this format:
-```markdown
-Revise chapter ch[N] based on the following audit feedback:
-- **Cliffhanger [FAIL/PASS]**: [If fail, describe issue mapping to rubric]
-- **Continuity [FAIL/PASS]**: [If fail, list contradiction with World Bible/Characters]
-- **Quality/Pacing [FAIL/PASS]**: [If fail, list specific issue like info-dump or power creep]
-Provide the revised text for the affected sections or the whole scene as needed.
-```
+The Auditor must archive the failed draft and the audit report
+1. **Archive Current File**: Save the current draft `novel/chapters/drafts/chapter_X_draft.md` to `novel/chapters/revisions/chapter_X_v[AttemptCount].md`.
+2. **Save Audit Report**: Save the final audit assessment to `novel/chapters/audits/chapter_X_audit_v[AttemptCount].md`
