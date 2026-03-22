@@ -87,7 +87,7 @@ When you finish a step, find the next step listed in its `Next:` field. Check TH
 - **P3-S4: Prose Revision**:
     - **Agent:** {{agent_name}}_writer
     - **Trigger In:** `"Run Prose Revision using novel/chapters/audits/chapter_X_audit_vN.md"`
-    - **Action:** Writer follows `instructions/prose_writer.md` and applies the specified audit report.
+    - **Action:** Writer follows `instructions/prose_reviser.md` and applies the specified audit report.
     - **Next:** `"/reasoning on\nAudit Chapter X"`
 
 ## Phase 4: Polish & Review
@@ -95,7 +95,7 @@ When you finish a step, find the next step listed in its `Next:` field. Check TH
 - **P4-S1: Dialog Polishing**:
     - **Agent:** {{agent_name}}_writer
     - **Trigger In:** `"Revise Dialog for Chapter X"`
-    - **Action:** Writer follows `instructions/prose_writer.md` and revises dialog overwriting `novel/chapters/drafts/chapter_X_draft.md`.
+    - **Action:** Writer follows `instructions/prose_dialog_polisher.md` and revises dialog overwriting `novel/chapters/drafts/chapter_X_draft.md`.
     - **Next:** `"/reasoning off\nProofread Chapter X"`
 
 - **P4-S2: Copy Editing**:
