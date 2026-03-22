@@ -14,7 +14,6 @@ When you finish a step, find the next step listed in its `Next:` field. Check TH
 
 ## Phase 1: World & Characters Planning
 
-
 **Triggered by:** User command `"Start a new novel"` or `"Run [Step_Name]"`
 
 - **P1-S1: World Building**:
@@ -56,8 +55,8 @@ When you finish a step, find the next step listed in its `Next:` field. Check TH
 
 ## Phase 3: Chapter Drafting & Audit
 
-
 **Trigger:** User command `"Start next chapter"` or `"Run Briefing for Ch X"`.
+
 **🚨 Hold Gate:** Do NOT start Ch X+1 until Ch X is COMPLETE. Auto-triggering forbidden.
 
 - **P3-S1: Briefing**:
@@ -116,5 +115,3 @@ When you finish a step, find the next step listed in its `Next:` field. Check TH
       `openclaw agent --agent {{agent_name}}_writer --message "/new"`
       `openclaw agent --agent {{agent_name}}_proofreader --message "/new"`
       `openclaw agent --agent {{agent_name}} --message "/new"`
-
-

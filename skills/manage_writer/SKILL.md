@@ -42,9 +42,7 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/instructions/"*.md
    ```
 
-
-
-4. **Register Coordinator Agent:**
+3. **Register Coordinator Agent:**
    ```bash
    COORD_MODEL=$(awk -F'|' '/ coordinator / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
 
@@ -53,7 +51,7 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
      --model "$COORD_MODEL"
    ```
 
-5. **Register Sub-Agents:**
+4. **Register Sub-Agents:**
    Each sub-agent is registered with its own model via MODELS.md.
    ```bash
    # Planner
@@ -75,10 +73,10 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
      --model "$PROOF_MODEL"
    ```
 
-6. **Create Discord Thread:**
+5. **Create Discord Thread:**
    Use the `discord_thread` skill. It handles idempotency — safe to call multiple times.
 
-8. **Write Discord Info into Instructions:**
+6. **Write Discord Info into Instructions:**
    Append the generic Discord tool out commands to the instruction files so every agent knows how to post:
    ```bash
    for role in planner writer proofreader; do
@@ -96,12 +94,12 @@ EOF
    echo "✅ Discord settings appended to instructions"
    ```
 
-9. **Introduce New Agent:**
+7. **Introduce New Agent:**
    ```bash
    openclaw agent --to $AGENT_NAME_LOWER --message "Please introduce yourself in your Discord thread."
    ```
 
-10. **Verify and Fix (Spawn):**
+8. **Verify and Fix (Spawn):**
     Run this validation to check your work:
     ```bash
     [ -d "$AGENT_DIR" ] || echo "❌ Workspace missing, re-run Step 1"
@@ -139,10 +137,10 @@ To terminate and archive a Writer Agent team:
    fi
    ```
 
-   # Step 3: Archive Discord Thread and Remove Binding
-   # (Delegate to skills/discord_thread/SKILL.md Archive function)
+3. **Archive Discord Thread and Remove Binding:**
+   Use the `discord_thread` skill Archive function to archive the thread and remove its binding from `openclaw.json`.
 
-6. **Unregister All Agents from OpenClaw:**
+4. **Unregister All Agents from OpenClaw:**
    ```bash
    openclaw agents delete $AGENT_NAME_LOWER
    openclaw agents delete ${AGENT_NAME_LOWER}_planner
@@ -150,17 +148,17 @@ To terminate and archive a Writer Agent team:
    openclaw agents delete ${AGENT_NAME_LOWER}_proofreader
    ```
 
-7. **Remove Workspace:**
+5. **Remove Workspace:**
    ```bash
    rm -rf "$WORKSPACE_ROOT/agents/nnw_writer_<YOUR_AGENT_NAME>"
    ```
 
-8. **Reload OpenClaw Gateway:**
+6. **Reload OpenClaw Gateway:**
    ```bash
    openclaw gateway restart 
    ```
 
-9. **Verify and Fix (Remove):**
+7. **Verify and Fix (Remove):**
    Run this validation to check your work:
    ```bash
    WORKSPACE_ROOT=$(git rev-parse --show-toplevel)
