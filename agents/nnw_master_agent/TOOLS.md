@@ -11,24 +11,8 @@ echo "$CONTENT" | fold -s -w 1900 | while IFS= read -r chunk; do
 done
 ```
 
----
-
-## Post a Message to the Main Discord Channel
-
-Read channel ID from `openclaw.json`:
-```bash
-CHANNEL_ID=$(jq -r '.channels.discord.guilds | to_entries[0].value.channels | keys[0]' \
-  "$HOME/.openclaw/openclaw.json")
-
-openclaw message send --channel discord --target "$CHANNEL_ID" --message "Your message here"
-```
-
----
-
-## Spawn or Remove a Writer Agent
-
-Refer to the `create_discord_thread` skill and `manage_writer` skill in your skills directory.
-
 ## WhatsApp Messaging
 - You can send notifications to the user via WhatsApp.
-- When you need to notify the user, send a message through the WhatsApp channel
+```bash
+openclaw message send --channel whatsapp --target "<phone_number>" --message "<message>"
+```
