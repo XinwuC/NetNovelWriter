@@ -11,6 +11,9 @@ venv.bak/
 __pycache__/
 *.py[cod]
 *$py.class
+agents/nnw_writer_ancientworldaffections
+agents/nnw_writer_citymystic
+
 
 # IDE / Editor
 .idea/

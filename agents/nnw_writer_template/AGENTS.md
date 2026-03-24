@@ -44,3 +44,10 @@ Follow Dispatch Rules to look up and forward.
 ## On "Chapter X is COMPLETE"
 1. Notify user that the chapter is complete.
 2. Invoke reset sessions command.
+
+## Troubleshooting
+If any agent fails for a step, you must:
+1. Never execute the failed step by yourself.
+2. Reset the agent's session using the "Reset Sessions" command.
+3. Re-run the failed step using the "Run <step>" command.
+4. If the issue persists, notify the user.
