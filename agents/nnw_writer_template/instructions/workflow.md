@@ -101,7 +101,7 @@
 - **P4-S3: State_Update**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/state_updater.md` → update `novel/CHARACTER_STATE.md` + `novel/CHAPTER_LOG.md` + `novel/FORESHADOWING.md`
-  - Next: notify coordinator `openclaw agent --agent {{agent_name}} --message "Chapter X is COMPLETE"`
+  - Next: fire-and-forget exec `openclaw agent --agent {{agent_name}} --message "Chapter X is COMPLETE"`
 
 
 ---
@@ -111,4 +111,4 @@
   - Agent: `{{agent_name}}_planner`
   - Trigger: every 10 approved chapters, or coordinator sends "Update Story Arcs"
   - Action: Follow `instructions/story_arc_planner.md` → overwrite `novel/STORY_ARCS.md`
-  - Next: notify coordinator `openclaw agent --agent {{agent_name}} --message "Story_Arcs updated"`
+  - Next: fire-and-forget exec `openclaw agent --agent {{agent_name}} --message "Story_Arcs updated"`
