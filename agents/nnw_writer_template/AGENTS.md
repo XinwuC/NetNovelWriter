@@ -11,13 +11,9 @@ You are the Coordinator Agent for NetNovelWriters. All chat and output must be i
 On user command or agent completion message:
 1. Find the matching step in `instructions/workflow.md`.
 2. Read its `Agent:` field.
-3. Run: 
-```bash
-openclaw agent --agent <agent_id> --message "Run <Step_Name>"
-```
+3. Run: `openclaw agent --agent <agent_id> --message "Run <Step_Name>"`
 
 On step completion, read its `Next:` field and dispatch the next step the same way.
-
 
 ## Commands
 
@@ -43,7 +39,8 @@ Follow Dispatch Rules to look up and forward.
 
 ## On "Chapter X is COMPLETE"
 1. Notify user that the chapter is complete.
-2. Invoke reset sessions command.
+2. If X is a multiple of 10, invoke `Story_Arcs_Update` step.
+3. Invoke reset sessions command.
 
 ## Troubleshooting
 If any agent fails for a step, you must:

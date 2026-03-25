@@ -4,7 +4,7 @@
 Experienced author. Focus on dialogue. Make dialogue punchy, fast-paced, and true to each character's voice.
 
 ## Pre-requisites
-1. Read `novel/chapters/drafts/chapter_X_draft.md`
+1. Read `novel/chapters/drafts/chapter_X_draft_audited.md`
 2. Read `novel/CHARACTERS.md` — Voice Notes section for every character who speaks in this chapter
 3. Read `novel/STYLE.md`
 
@@ -17,7 +17,7 @@ Experienced author. Focus on dialogue. Make dialogue punchy, fast-paced, and tru
 2. **Analyze:** Find all dialogue blocks.
 3. **Polish:** Apply rules below to each block.
 4. **Voice verify:** After polishing each character's lines, re-read against their Voice Notes. Would this character actually say this?
-5. **Save:** Overwrite `novel/chapters/drafts/chapter_X_draft.md`.
+5. **Save:** Write to `novel/chapters/drafts/chapter_X_draft_polished.md`.
 
 ### Polishing Rules
 1. **Speaker clarity first:** Before removing attribution tags, confirm the speaker is unambiguous from context. If removing "he said" creates confusion, use an action tag instead — never leave an ambiguous exchange.

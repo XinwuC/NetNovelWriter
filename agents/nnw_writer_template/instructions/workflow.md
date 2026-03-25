@@ -1,9 +1,8 @@
 # Novel Generation Workflow
 
-> Step registry only. Coordinator reads `Agent:` to dispatch.
-> Agents read `Next:` to chain steps after completing their own step. **NEVER** use `sessions_spawn`.
-> Dispatch command: `openclaw agent --agent <agent_name> --message "<message>"`
-> Phase 1–2: planner self-chains all steps without waking coordinator between them.
+## Notify <agent_name> with <message>
+- bash: `openclaw agent --agent <agent_name> --message "<message>" --no-wait`
+- **never use sessions_spawn for notification**
 
 ---
 
@@ -12,17 +11,17 @@
 - **P1-S1: World_Building**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/world_builder.md` → `novel/WORLD_BIBLE.md` + initialize `novel/CHARACTER_STATE.md` + `novel/CHAPTER_LOG.md`
-  - Next: `Character_Profiling`
+  - Next: notify `{{agent_name}}` with message `run Character_Profiling`
 
 - **P1-S2: Character_Profiling**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/character_development.md` → `novel/CHARACTERS.md`
-  - Next: `Plot_Skeletons`
+  - Next: notify `{{agent_name}}` with message `run Plot_Skeletons`
 
 - **P1-S3: Plot_Skeletons**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/outline_planner.md` → `novel/OUTLINE.md`
-  - Next: `Story_Arcs`
+  - Next: notify  `{{agent_name}}` with message `run Story_Arcs`
 
 ---
 
@@ -31,17 +30,17 @@
 - **P2-S1: Story_Arcs**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/story_arc_planner.md` → `novel/STORY_ARCS.md`
-  - Next: `Foreshadowing`
+  - Next: notify `{{agent_name}}` with message `run Foreshadowing`
 
 - **P2-S2: Foreshadowing**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/foreshadowing_specialist.md` → `novel/FORESHADOWING.md`
-  - Next: `Book_Title`
+  - Next: notify `{{agent_name}}` with message `run Book_Title`
 
 - **P2-S3: Book_Title**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/book_title.md` → `novel/METADATA.md`
-  - Next: notify coordinator `"Phase 1+2 complete"`
+  - Next: notify `{{agent_name}}` with message `"Phase 1+2 complete"`
 
 ---
 
@@ -53,12 +52,12 @@
   - Agent: `{{agent_name}}_planner`
   - Prerequisite: `novel/chapters/chapter_(X-1)_final.md` exists (skip for Ch 1)
   - Action: Follow `instructions/chapter_outliner.md` → `novel/chapters/briefs/chapter_X_brief.md`
-  - Next: `Prose_Draft`
+  - Next: notify `{{agent_name}}` with message `run Prose_Draft`
 
 - **P3-S2: Prose_Draft**
   - Agent: `{{agent_name}}_writer`
   - Action: Follow `instructions/prose_writer.md` → `novel/chapters/drafts/chapter_X_draft.md`
-  - Next: `Audit_and_Revise` with message `"Audit novel/chapters/drafts/chapter_X_draft.md"`
+  - Next: notify `{{agent_name}}` with message `"Audit novel/chapters/drafts/chapter_X_draft.md"`
 
 - **P3-S3: Audit_and_Revise**
   - Agent: `{{agent_name}}_planner`
@@ -67,19 +66,21 @@
        1. If `chapter_X_v1.md` is **NOT** found, set `attempt = 0`.
        2. If `chapter_X_v[N].md` **is found**, set `attempt = N`.
     2. If `attempt == max_attempts`:
-       1. Score all revisions in `novel/chapters/revisions/` and copy the best to `novel/chapters/drafts/chapter_X_draft.md`
+       1. Score all revisions in `novel/chapters/revisions/` and copy the best to `novel/chapters/drafts/chapter_X_draft_audited.md`
        2. Proceed to  `Dialog_Polish`
     3. If `attempt < max_attempts`:
        1. Follow `instructions/auditor.md` to audit `novel/chapters/drafts/chapter_X_draft.md`
-       2. **Pass:** proceed to  `Dialog_Polish`
+       2. **Pass:** 
+          1. copy `novel/chapters/drafts/chapter_X_draft.md` to `novel/chapters/drafts/chapter_X_draft_audited.md`
+          2. proceed to  `Dialog_Polish`
        3. **Fail:**
           1. report failed audit status as needed.
-          2. wake writer: `openclaw agent --agent {{agent_name}}_writer --message "Run Prose_Revision using novel/chapters/audits/chapter_X_audit_v[attempt+1].md"`
+          2. notify `{{agent_name}}_writer` with message `"Run Prose_Revision using novel/chapters/audits/chapter_X_audit_v[attempt+1].md"`
 
  - **P3-S4: Prose_Revision**
     - Agent: `{{agent_name}}_writer`
     - Action: Follow `instructions/prose_reviser.md` using the audit file specified in trigger message
-    - Next: `Audit_and_Revise` with message `"Audit novel/chapters/drafts/chapter_X_draft.md"`
+    - Next: notify `{{agent_name}}_planner` with message `"Audit novel/chapters/drafts/chapter_X_draft.md"`
 
 ---
 
@@ -87,21 +88,18 @@
 
 - **P4-S1: Dialog_Polish**
   - Agent: `{{agent_name}}_writer`
-  - Action: Follow `instructions/prose_dialog_polisher.md` → overwrite `novel/chapters/drafts/chapter_X_draft.md`
-  - Next: `Copy_Edit`
+  - Action: Follow `instructions/prose_dialog_polisher.md` → `novel/chapters/drafts/chapter_X_draft_polished.md`
+  - Next: notify `{{agent_name}}` with message `run Copy_Edit`
 
 - **P4-S2: Copy_Edit**
   - Agent: `{{agent_name}}_proofreader`
   - Action: Follow `instructions/proofreader.md` → `novel/chapters/chapter_X_final.md`
-  - Next: `State_Update`:
-    ```bash
-    openclaw agent --agent {{agent_name}}_planner --message "Run State_Update using novel/chapters/chapter_X_final.md"
-    ```
+  - Next: notify `{{agent_name}}` with message `run State_Update`
 
 - **P4-S3: State_Update**
   - Agent: `{{agent_name}}_planner`
   - Action: Follow `instructions/state_updater.md` → update `novel/CHARACTER_STATE.md` + `novel/CHAPTER_LOG.md` + `novel/FORESHADOWING.md`
-  - Next: fire-and-forget exec `openclaw agent --agent {{agent_name}} --message "Chapter X is COMPLETE"`
+  - Next: notify `{{agent_name}}` with message `"Chapter X is COMPLETE"`
 
 
 ---
@@ -111,4 +109,4 @@
   - Agent: `{{agent_name}}_planner`
   - Trigger: every 10 approved chapters, or coordinator sends "Update Story Arcs"
   - Action: Follow `instructions/story_arc_planner.md` → overwrite `novel/STORY_ARCS.md`
-  - Next: fire-and-forget exec `openclaw agent --agent {{agent_name}} --message "Story_Arcs updated"`
+  - Next: notify `{{agent_name}}` with message `"Story_Arcs updated"`

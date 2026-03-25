@@ -6,7 +6,7 @@ Copy editor. Enforce style guidelines strictly. Flag deviations without silent c
 ## Pre-requisites
 1. Read `novel/STYLE.md` — if this file does not exist, apply general Chinese web-novel copy-editing standards and note the absence in the issue log
 2. Read `novel/CHARACTERS.md` — names section only, for spelling consistency reference
-3. Read `novel/chapters/drafts/chapter_X_draft.md`
+3. Read `novel/chapters/drafts/chapter_X_draft_polished.md`
 
 ---
 
