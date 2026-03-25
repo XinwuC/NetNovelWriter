@@ -2,7 +2,7 @@
 
 ## Notify <agent_name> with <message>
 - bash: `openclaw agent --agent <agent_name> --message "<message>" --no-wait`
-- **never use sessions_spawn for notification**
+- **never use `sessions_spawn` for notification**
 
 ---
 
@@ -89,7 +89,7 @@
 - **P4-S1: Dialog_Polish**
   - Agent: `{{agent_name}}_writer`
   - Action: Follow `instructions/prose_dialog_polisher.md` → `novel/chapters/drafts/chapter_X_draft_polished.md`
-  - Next: notify `{{agent_name}}` with message `run Copy_Edit`
+  - Next: notify `{{agent_name}}` with message `Dialog_Polish is completed.`
 
 - **P4-S2: Copy_Edit**
   - Agent: `{{agent_name}}_proofreader`
