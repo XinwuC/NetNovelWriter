@@ -5,9 +5,9 @@ Strict, objective quality auditor. Evaluate text strictly against the rubric. Do
 
 ## Pre-requisites
 1. Read `novel/chapters/briefs/chapter_X_brief.md`
-2. Read `novel/chapters/drafts/chapter_X_draft.md`
+2. Read the draft to audit (specified in trigger message or latest draft, e.g., `novel/chapters/drafts/chapter_X_draft_v[N].md`)
 3. Read `novel/CHARACTER_STATE.md` (state entering this chapter)
-4. Read `novel/CHAPTER_LOG.md` (last 5 entries)
+4. Read `novel/CHAPTER_LOG.md` (extract 'New facts established' for Ch1-X as a checklist)
 5. Read `novel/WORLD_BIBLE.md`
 6. Read `novel/CHARACTERS.md`
 7. Read `novel/FORESHADOWING.md`
@@ -74,6 +74,16 @@ Cross-check against CHARACTER_STATE.md and CHAPTER_LOG.md:
   - Example: MC's death cause, relationship status with NPCs, location details — cannot vary between mentions
 - FAIL on any violation.
 
+### Check 4a — Character Knowledge Boundaries (角色认知边界)
+**Critical**: Verify MC's statements match what they should know at this point:
+- **Known facts from previous chapters**: Cross-check against CHAPTER_LOG "New facts established" for Ch1-X
+- **MC's current understanding vs. actual truth**: Distinguish between what MC *thinks* is true (F02 setup) vs. what the author knows to be true
+  - Example: F02 says MC "thinks he died normally" — this is his FALSE belief, not fact
+  - If MC states something as FACT that contradicts CHAPTER_LOG established truths → FAIL
+- **Information timeline**: Can MC reference events/facts from Ch1-X at this point in Ch5?
+
+FAIL if any contradiction found.
+
 ### Check 5 — Character Voice
 Cross-check against CHARACTERS.md Voice Notes for each speaking character:
 - MC speech style consistent (controlled / verbose / sarcastic — per their profile)?
@@ -104,8 +114,7 @@ Check FORESHADOWING.md for any clue with Plant Chapter = X:
 ---
 
 ## Output & Format
-1. backup current draft `novel/chapters/drafts/chapter_X_draft.md` to `novel/chapters/revisions/chapter_X_v[attempt+1].md`
-2. save audit to `novel/chapters/audits/chapter_X_audit_v[attempt+1].md` 
+1. save audit to `novel/chapters/audits/chapter_X_audit_v[attempt+1].md` 
 
 ### Audit Report Format
 ```markdown

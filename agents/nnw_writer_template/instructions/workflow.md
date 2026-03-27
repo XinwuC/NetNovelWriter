@@ -56,31 +56,22 @@
 
 - **P3-S2: Prose_Draft**
   - Agent: `{{agent_name}}_writer`
-  - Action: Follow `instructions/prose_writer.md` → `novel/chapters/drafts/chapter_X_draft.md`
-  - Next: notify `{{agent_name}}` with message `"Audit novel/chapters/drafts/chapter_X_draft.md"`
+  - Action: Follow `instructions/prose_writer.md` → `novel/chapters/drafts/chapter_X_draft_v0.md`
+  - Next: notify `{{agent_name}}` with message `"Audit novel/chapters/drafts/chapter_X_draft_v0.md"`
 
 - **P3-S3: Audit_and_Revise**
   - Agent: `{{agent_name}}_planner`
-  - Action: Run audit loop (max_attempts=10):
-    1. Find past attempts by listing `novel/chapters/revisions/`:
-       1. If `chapter_X_v1.md` is **NOT** found, set `attempt = 0`.
-       2. If `chapter_X_v[N].md` **is found**, set `attempt = N`.
-    2. If `attempt == max_attempts`:
-       1. Score all revisions in `novel/chapters/revisions/` and copy the best to `novel/chapters/drafts/chapter_X_draft_audited.md`
-       2. Proceed to  `Dialog_Polish`
-    3. If `attempt < max_attempts`:
-       1. Follow `instructions/auditor.md` to audit `novel/chapters/drafts/chapter_X_draft.md`
-       2. **Pass:** 
-          1. copy `novel/chapters/drafts/chapter_X_draft.md` to `novel/chapters/drafts/chapter_X_draft_audited.md`
-          2. proceed to  `Dialog_Polish`
-       3. **Fail:**
-          1. report failed audit status as needed.
-          2. notify `{{agent_name}}_writer` with message `"Run Prose_Revision using novel/chapters/audits/chapter_X_audit_v[attempt+1].md"`
+  - Action: Follow `Audit_and_Revise` step in `instructions/planner_workflow.md`
+  - Next:
+    - Audit **Passed**: -> `novel/chapters/drafts/chapter_X_draft_audited.md`
+    - Audit **Failed**: Run `Prose_Revision`
 
  - **P3-S4: Prose_Revision**
     - Agent: `{{agent_name}}_writer`
-    - Action: Follow `instructions/prose_reviser.md` using the audit file specified in trigger message
-    - Next: notify `{{agent_name}}_planner` with message `"Audit novel/chapters/drafts/chapter_X_draft.md"`
+    - Action: 
+      - **If `novel/chapters/drafts/chapter_X_draft_audited.md` exists**: skip this step and move on to next
+      - **Otherwise**: Follow `instructions/prose_reviser.md` to create `novel/chapters/drafts/chapter_X_draft_v[attempt+1].md`.
+    - Next: notify `{{agent_name}}` with message `"Audit revised draft: novel/chapters/drafts/chapter_X_draft_v[attempt+1].md"`
 
 ---
 
@@ -89,7 +80,7 @@
 - **P4-S1: Dialog_Polish**
   - Agent: `{{agent_name}}_writer`
   - Action: Follow `instructions/prose_dialog_polisher.md` → `novel/chapters/drafts/chapter_X_draft_polished.md`
-  - Next: notify `{{agent_name}}` with message `Dialog_Polish is completed.`
+  - Next: notify `{{agent_name}}` with message `run Copy_Edit`
 
 - **P4-S2: Copy_Edit**
   - Agent: `{{agent_name}}_proofreader`

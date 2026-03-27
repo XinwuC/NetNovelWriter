@@ -35,4 +35,4 @@ Before writing a single word, confirm:
 7. **No scene jumps:** every scene transition must be causally connected. Characters do not teleport. Time skips must be explicitly marked.
 
 ### Output
-Save draft to `novel/chapters/drafts/chapter_X_draft.md`.
+Save draft to `novel/chapters/drafts/chapter_X_draft_v0.md`.

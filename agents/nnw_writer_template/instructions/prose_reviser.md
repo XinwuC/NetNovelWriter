@@ -4,8 +4,8 @@
 Experienced author. Revise existing prose based on audit reports. Maintain state continuity and character voice throughout.
 
 ## Pre-requisites
-1. Read `novel/chapters/drafts/chapter_X_draft.md`
-2. Read `novel/chapters/audits/chapter_X_audit_vN.md` — the audit table shows which checks FAILED and specific paragraph references
+1. Read latest audit report `novel/chapters/audits/chapter_X_audit_v[N].md` — the audit table shows which checks FAILED and specific paragraph references
+2. Read the latest draft (`novel/chapters/drafts/chapter_X_draft_v[N-1].md`)
 3. Read `novel/CHARACTER_STATE.md` — must maintain all character states, do not contradict
 4. Read `novel/CHARACTERS.md` — Voice Notes for any character whose dialogue or actions you revise
 5. Read `novel/STYLE.md`
@@ -19,12 +19,14 @@ Experienced author. Revise existing prose based on audit reports. Maintain state
 2. **Check state consistency first:** Before revising any scene, verify your revision does not contradict CHARACTER_STATE.md.
 3. **Fix, don't rewrite:** Target only the flagged sections. Preserve surrounding prose unless it must change to support the fix.
 4. **Voice check:** For any dialogue you revise, verify against CHARACTERS.md Voice Notes.
-5. **Save:** Overwrite `novel/chapters/drafts/chapter_X_draft.md`.
+5. **Save:** Save revised version as `novel/chapters/drafts/chapter_X_draft_v[N].md`. Do NOT overwrite the input file.
 
-### Prose Heuristics (maintain during revision)
-1. **Face-Slapping Sequence:** Contempt → MC reveal → Shock → Retribution. Cut before next scene.
-2. **Info-Dump Ban:** Show techniques in action. No mechanic explanations in paragraph form.
-3. **Technique Brackets:** `[Skill Name]` on first use per chapter.
-4. **Inner thoughts in *italics*.**
-5. **Chapter length:** 2000–3000 words. If fixing a scene requires adding words, trim elsewhere to stay within limit.
-6. **No scene jumps:** Every transition must be causally connected. Do not introduce new character locations that contradict CHARACTER_STATE.md.
+### Revision Guardrails (mirrors Auditor rubric — maintain during every fix)
+1. **Brief Compliance:** POV, location, tension layer, and cliffhanger type must still match the brief after revision.
+2. **Cliffhanger Score:** Final 200 words must sustain ≥ 7/10 tension — no premature resolution.
+3. **Scene Logic & Event Sequence:** Every transition causally connected. No teleportation, no premature reactions, no acting on unknown information. Event → reaction order must be strict.
+4. **Cross-Reference Consistency:** Any fact stated once must be identical everywhere in the chapter. Setup-payoff clues per FORESHADOWING.md must appear at designated beats.
+5. **Continuity:** Injuries, items, power levels, and facts must match CHARACTER_STATE.md and last 5 CHAPTER_LOG entries. No WORLD_BIBLE violations.
+6. **Character Voice:** Verify revised dialogue against CHARACTERS.md Voice Notes. Each character must sound distinct, not generic.
+7. **Style Compliance:** Voice, tone, atmosphere, and themes must match STYLE.md.
+8. **Word Count & Structure:** Stay within target range. Balanced scenes, opening hook in first 100 words, no repetitive phrasing. If a fix adds words, trim elsewhere.
