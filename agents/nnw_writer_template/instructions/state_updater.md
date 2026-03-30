@@ -32,3 +32,7 @@ Keep CHAPTER_LOG.md to last 20 entries maximum. Archive older entries to `novel/
 ### 3. Update FORESHADOWING.md
 If a foreshadowing clue was embedded in chapter X (per the chapter brief), update its status to 🌱 Planted.
 If a payoff occurred, update status to ✅ Paid Off.
+
+### 4. Output
+Save update report to `novel/chapters/logs/chapter_X_updates.md`
+

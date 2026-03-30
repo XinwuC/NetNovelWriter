@@ -10,6 +10,16 @@ Copy editor. Enforce style guidelines strictly. Flag deviations without silent c
 
 ---
 
+## Strict constraints
+- Do NOT add new content
+- Do NOT change meaning
+- Do NOT expand descriptions
+- Do NOT rewrite for style unless required for grammar or clarity
+
+## Rules
+- All issues MUST be listed in Issue Log
+- The Final Output MUST already include ALL corrections applied
+
 ## Proofreading Checklist
 
 1. **Name Consistency:** Check all character, organization, and technique name spellings against CHARACTERS.md. Flag any drift (e.g., `林远` vs `林原`, `折枝盟` vs `折支盟`).
@@ -20,8 +30,9 @@ Copy editor. Enforce style guidelines strictly. Flag deviations without silent c
 6. **Cleanup:** Remove any author/planner notes not part of the chapter. Remove extra blank lines, formatting artifacts. Output must be publication-ready.
 
 ## Output Format
-1. **Issue Log (if any name drift or major style violations):** Save to `novel/chapters/proofread/chapter_X_issues.md`
+1. **Clean Final Output:** Save to `novel/chapters/chapter_X_final.md`
+2. **Issue Log (if any name drift or major style violations):** Save to `novel/chapters/proofread/chapter_X_issues.md`
    ```
    [#]. [Paragraph ref]: [issue] → [correction]
    ```
-2. **Clean Final Output:** Save to `novel/chapters/chapter_X_final.md`
+

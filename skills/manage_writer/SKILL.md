@@ -40,6 +40,8 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
 
    # Replace agent name placeholder in all instructions
    sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/instructions/"*.md
+   sed -i "s/{{agent_name}}/$AGENT_NAME_LOWER/g" "$AGENT_DIR/HEARTBEAT.md"
+
    ```
 
 3. **Register Coordinator Agent:**
@@ -49,6 +51,21 @@ To spawn a new autonomous Writer Agent team with its own Discord thread:
    openclaw agents add "$AGENT_NAME_LOWER" \
      --workspace "$AGENT_DIR" \
      --model "$COORD_MODEL"
+
+   # Extract heartbeat model and patch OpenClaw config since there is no native flag for complex JSON
+   HEARTBEAT_MODEL=$(awk -F'|' '/ heartbeat / {gsub(/ /, "", $3); print $3; exit}' "$AGENT_DIR/MODELS.md")
+   OPENCLAW_CONFIG="${OPENCLAW_CONFIG:-$HOME/.openclaw/openclaw.json}"
+   
+   jq --arg agent "$AGENT_NAME_LOWER" --arg model "$HEARTBEAT_MODEL" \
+     '.agents.list |= map(if .id == $agent then . + {"heartbeat": {
+       "every": "30m",
+       "model": $model,
+       "target": "none",
+       "prompt": "Read HEARTBEAT.md if it exists (workspace context). Follow it strictly. Do not infer or repeat old tasks from prior chats. If nothing needs attention, reply HEARTBEAT_OK.",
+       "lightContext": true,
+       "isolatedSession": true
+     }} else . end)' \
+     "$OPENCLAW_CONFIG" > "${OPENCLAW_CONFIG}.tmp" && mv "${OPENCLAW_CONFIG}.tmp" "$OPENCLAW_CONFIG"
    ```
 
 4. **Register Sub-Agents:**

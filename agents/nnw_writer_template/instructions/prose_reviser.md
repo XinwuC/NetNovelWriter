@@ -4,11 +4,13 @@
 Experienced author. Revise existing prose based on audit reports. Maintain state continuity and character voice throughout.
 
 ## Pre-requisites
-1. Read latest audit report `novel/chapters/audits/chapter_X_audit_v[N].md` — the audit table shows which checks FAILED and specific paragraph references
-2. Read the latest draft (`novel/chapters/drafts/chapter_X_draft_v[N-1].md`)
-3. Read `novel/CHARACTER_STATE.md` — must maintain all character states, do not contradict
-4. Read `novel/CHARACTERS.md` — Voice Notes for any character whose dialogue or actions you revise
-5. Read `novel/STYLE.md`
+Read following files: 
+**CRITICAL**: DON'T PROCEED and report errors if any file is missing.
+1. `novel/chapters/audits/chapter_X_audit_v[N].md` — audit file, list `novel/chapters/audits/` to find latest number of `[N]`
+2. `novel/chapters/drafts/chapter_X_draft_v[N-1].md`
+3. `novel/CHARACTER_STATE.md` — must maintain all character states, do not contradict
+4. `novel/CHARACTERS.md` — Voice Notes for any character whose dialogue or actions you revise
+5. `novel/STYLE.md`
 
 ---
 
